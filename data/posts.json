@@ -1,0 +1,123 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "slug": "how-to-study-abroad-in-the-uk",
+      "title": "How to Study Abroad in the UK",
+      "excerpt": "Planning to study abroad in the UK? You're making an excellent choice. This comprehensive guide explains exactly how to study in UK for international students, covering everything from university applications to student visa requirements for the 2025 academic year.",
+      "tags": [
+        "Study Abroad",
+        "UK Universities",
+        "International Students",
+        "Education"
+      ],
+      "category": "Application Process",
+      "status": "published",
+      "author": {
+        "id": 1,
+        "name": "Blog Administrator"
+      },
+      "canonical_url": "https://example.com/blog/how-to-study-abroad-in-the-uk",
+      "published_at": "2025-09-03T00:00:00.000Z",
+      "meta_title": "How to Study Abroad in the UK - Complete Guide 2025",
+      "meta_description": "Complete guide for international students on how to study abroad in the UK. Learn about university applications, visa requirements, costs, and opportunities in 2025.",
+      "featured_image_id": 1,
+      "language": "en",
+      "created_at": "2025-09-01T00:00:00.000Z",
+      "updated_at": "2025-09-03T00:00:00.000Z",
+      "active": 1
+    },
+    {
+      "id": 2,
+      "slug": "student-mental-health-crisis-2025",
+      "title": "The Student Mental Health Crisis 2025: Navigating University Applications",
+      "excerpt": "The landscape of higher education has fundamentally shifted, and with it, the mental health challenges facing students have reached high levels. Learn how to navigate university applications while maintaining your mental wellbeing.",
+      "tags": [
+        "Mental Health",
+        "University Applications",
+        "Student Wellbeing",
+        "UK Education"
+      ],
+      "category": "Student Life",
+      "status": "published",
+      "author": {
+        "id": 1,
+        "name": "Blog Administrator"
+      },
+      "canonical_url": "https://example.com/blog/student-mental-health-crisis-2025",
+      "published_at": "2025-08-29T00:00:00.000Z",
+      "meta_title": "Student Mental Health Crisis 2025: University Application Support",
+      "meta_description": "Navigate the university application process while protecting your mental health. Get support, tips, and resources for student wellbeing in 2025.",
+      "featured_image_id": 2,
+      "language": "en",
+      "created_at": "2025-08-27T00:00:00.000Z",
+      "updated_at": "2025-08-29T00:00:00.000Z",
+      "active": 1
+    },
+    {
+      "id": 3,
+      "slug": "ai-powered-university-applications",
+      "title": "AI-Powered University Applications: Transforming Student Success",
+      "excerpt": "Imagine having a personal education advisor who never sleeps, knows every university requirement worldwide, and learns from thousands of successful student stories. This is the reality of AI-powered university applications.",
+      "tags": [
+        "AI",
+        "Technology",
+        "University Applications",
+        "Education Technology"
+      ],
+      "category": "Application Process",
+      "status": "published",
+      "author": {
+        "id": 2,
+        "name": "Blog Editor"
+      },
+      "canonical_url": "https://example.com/blog/ai-powered-university-applications",
+      "published_at": "2025-09-29T11:08:27.247Z",
+      "meta_title": "AI-Powered University Applications - Transform Your Success",
+      "meta_description": "Discover how AI-powered university applications are transforming student success. Learn about intelligent matching, automated support, and personalized guidance.",
+      "featured_image_id": 3,
+      "language": "en",
+      "created_at": "2025-08-18T00:00:00.000Z",
+      "updated_at": "2025-09-29T11:08:27.887Z",
+      "active": 1
+    },
+    {
+      "id": 5,
+      "created_at": "2025-09-22T11:36:05.761Z",
+      "updated_at": "2025-09-22T11:36:05.761Z",
+      "title": "AI-Powered University Applications: Transforming Student Success",
+      "slug": "ai-powered-university-applications",
+      "excerpt": "Imagine having a personal education advisor who never sleeps, knows every university requirement worldwide, and learns from ",
+      "meta_title": "",
+      "meta_description": "",
+      "status": "published",
+      "tags": [],
+      "category": "General",
+      "canonical_url": "",
+      "author": {
+        "id": 1,
+        "name": "Admin"
+      },
+      "published_at": "2025-09-22T11:36:05.385Z"
+    },
+    {
+      "id": 6,
+      "created_at": "2025-09-23T07:13:41.750Z",
+      "updated_at": "2025-09-24T09:43:53.974Z",
+      "title": "Lorem ipsum dolor",
+      "slug": "lorem-ipsum-dolor",
+      "excerpt": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam aliquam ipsa magnam incidunt, architecto tempore dolorum maiores ratione ad eos doloremque porro nobis cumque non error voluptatem libero, facere vero suscipit impedit vel laborum! Voluptatibus, et id. Ipsum reprehenderit facilis exercitationem, placeat consequuntur saepe autem aut repudiandae mollitia, et eum!",
+      "meta_title": "",
+      "meta_description": "",
+      "status": "published",
+      "tags": [],
+      "category": "Lifestyle",
+      "canonical_url": "",
+      "author": {
+        "id": 1,
+        "name": "Admin"
+      },
+      "published_at": "2025-09-23T07:13:40.641Z"
+    }
+  ]
+}

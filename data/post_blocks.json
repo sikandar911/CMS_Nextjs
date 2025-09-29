@@ -1,0 +1,420 @@
+{
+  "post_blocks": [
+    {
+      "id": "b1-title-001",
+      "post_id": 1,
+      "index": 0,
+      "type": "title",
+      "content": {
+        "text": "How to Study Abroad in the UK",
+        "level": "h1"
+      },
+      "settings": {
+        "alignment": "center",
+        "color": "#1f2937",
+        "fontSize": "2xl"
+      },
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-01T00:00:00.000Z",
+      "updated_at": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "b1-para-001",
+      "post_id": 1,
+      "index": 1,
+      "type": "paragraph",
+      "content": {
+        "html": "<p>Planning to study abroad in the UK? You're making an excellent choice. The United Kingdom attracts over 600,000 international students annually, making it the second most popular study destination globally.</p>"
+      },
+      "settings": {
+        "maxWidth": "760px",
+        "alignment": "left"
+      },
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-01T00:00:00.000Z",
+      "updated_at": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "b1-accordion-001",
+      "post_id": 1,
+      "index": 2,
+      "type": "accordion",
+      "content": {
+        "items": [
+          {
+            "id": "acc1",
+            "title": "Why Choose UK Universities?",
+            "body": "<p>The UK education system offers compelling advantages for international students seeking world-class education:</p><ul><li>Home to 4 of the world's top 10 universities</li><li>Degrees recognized by employers worldwide</li><li>Research-led teaching with cutting-edge facilities</li><li>Strong industry connections and internship opportunities</li></ul>"
+          },
+          {
+            "id": "acc2",
+            "title": "UK Student Visa Requirements",
+            "body": "<p>To successfully apply for a student visa UK, international students must meet these requirements:</p><ul><li>Valid passport (minimum 6 months remaining)</li><li>Confirmation of Acceptance for Studies (CAS)</li><li>Proof of English language proficiency</li><li>Financial evidence (bank statements, scholarship letters)</li></ul>"
+          }
+        ]
+      },
+      "settings": {
+        "multipleOpen": false,
+        "theme": "default"
+      },
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-01T00:00:00.000Z",
+      "updated_at": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "b2-title-001",
+      "post_id": 2,
+      "index": 0,
+      "type": "title",
+      "content": {
+        "text": "The Student Mental Health Crisis 2025",
+        "level": "h1"
+      },
+      "settings": {
+        "alignment": "left",
+        "color": "#111827",
+        "fontSize": "3xl"
+      },
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-08-27T00:00:00.000Z",
+      "updated_at": "2025-08-27T00:00:00.000Z"
+    },
+    {
+      "id": "b2-para-001",
+      "post_id": 2,
+      "index": 1,
+      "type": "paragraph",
+      "content": {
+        "html": "<p>The landscape of higher education has fundamentally shifted, and with it, the mental health challenges facing students have reached critical levels. Recent studies reveal that over 70% of students applying to universities report experiencing significant anxiety related to the application process.</p>"
+      },
+      "settings": {
+        "maxWidth": "800px",
+        "alignment": "left"
+      },
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-08-27T00:00:00.000Z",
+      "updated_at": "2025-08-27T00:00:00.000Z"
+    },
+    {
+      "id": "b2-tabs-001",
+      "post_id": 2,
+      "index": 2,
+      "type": "tabs",
+      "content": {
+        "tabs": [
+          {
+            "id": "tab1",
+            "title": "Support Services",
+            "content": "<p>UAPP provides comprehensive mental health support including:</p><ul><li>Weekly wellbeing check-ins</li><li>Stress management workshops</li><li>Peer support groups</li><li>Professional counseling referrals</li></ul>"
+          },
+          {
+            "id": "tab2",
+            "title": "Application Support",
+            "content": "<p>Our application support includes:</p><ul><li>Breaking down personal statements into manageable chunks</li><li>A-Level results day counseling</li><li>Student finance guidance</li><li>Alternative route planning</li></ul>"
+          }
+        ]
+      },
+      "settings": {
+        "theme": "default",
+        "orientation": "horizontal"
+      },
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-08-27T00:00:00.000Z",
+      "updated_at": "2025-08-27T00:00:00.000Z"
+    },
+    {
+      "id": "266a53ca-d660-4cc1-ad66-5db10370d2fd",
+      "post_id": 4,
+      "type": "title",
+      "content": {
+        "text": "London the Education Hub",
+        "level": 2
+      },
+      "settings": {
+        "alignment": "left",
+        "fontSize": "default",
+        "color": "#006d75"
+      },
+      "index": 0,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-22T11:23:16.002Z",
+      "updated_at": "2025-09-22T11:23:29.720Z",
+      "order": 1
+    },
+    {
+      "id": "33209201-38bf-47a9-8ff1-cb58787e8ac6",
+      "post_id": 4,
+      "type": "paragraph",
+      "content": {
+        "html": "<div style=\"background-color: rgb(31, 31, 31); line-height: 19px;\"><div style=\"color: rgb(204, 204, 204); font-family: Consolas, &quot;Courier New&quot;, monospace; font-size: 14px; white-space: pre;\"></div><div style=\"\"><span style=\"color: rgb(204, 204, 204); font-family: Consolas, &quot;Courier New&quot;, monospace; font-size: 14px; white-space: pre;\">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex nulla hic suscipit adipisci, maiores dolores, </span></div><div style=\"\"><span style=\"color: rgb(204, 204, 204); font-family: Consolas, &quot;Courier New&quot;, monospace; font-size: 14px; white-space: pre;\">voluptatum explicabo beatae corporis tempore odit error vitae odio veritatis dolore. Accusantium maxime dolores voluptatibus. </span></div><div style=\"\"><span style=\"color: rgb(204, 204, 204); font-family: Consolas, &quot;Courier New&quot;, monospace; font-size: 14px; white-space: pre;\">Quis quam aliquam exercitationem ab nesciunt illo tempore dolores possimus perferendis, cumque corrupti maxime molestias eligendi corporis deserunt ea voluptatibus distinctio numquam! Corrupti iste perspiciatis fugit aliquam veniam laudantium ipsam harum libero mollitia voluptas? Assumenda repellendus magni ea, </span></div><div style=\"\"><span style=\"color: rgb(204, 204, 204); font-family: Consolas, &quot;Courier New&quot;, monospace; font-size: 14px; white-space: pre;\">itaque commodi, voluptate placeat doloribus corrupti debitis explicabo, quasi qui sint asperiores ipsa</span><span style=\"font-size: 14px; white-space: pre; color: rgb(204, 204, 204); font-family: Consolas, &quot;Courier New&quot;, monospace;\">atque voluptatibus nulla odio sequi quia amet. Quasi magnam aliquid adipisci blanditiis. Ad blanditiis tempore cumque tenetur aut accusantium.</span></div></div>"
+      },
+      "settings": {
+        "alignment": "left",
+        "fontSize": "default"
+      },
+      "index": 1,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-22T11:23:16.002Z",
+      "updated_at": "2025-09-22T11:23:29.720Z",
+      "order": 2
+    },
+    {
+      "id": "5a11bee1-4e7e-401c-b59b-a11179426f87",
+      "post_id": 4,
+      "type": "card",
+      "content": {
+        "title": "Card Title 1",
+        "content": "Card content goes here...",
+        "imageUrl": "",
+        "link": {
+          "url": "https:/google.com",
+          "text": "Learn More",
+          "external": true
+        },
+        "image": "https://res.cloudinary.com/drgot7znf/image/upload/v1757498948/pexels-olly-3807755_pfv2gp.jpg",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex nulla hic suscipit adipisci, maiores dolores, voluptatum explicabo beatae corporis tempore odit error vitae odio veritatis dolore. Accusantium maxime dolores voluptatibus. Quis quam aliquam exercitationem ab nesciunt illo tempore dolores possimus perferendis, cumque corrupti maxime molestias eligendi corporis deserunt ea voluptatibus distinctio numquam! Corrupti iste perspiciatis fugit aliquam veniam laudantium ipsam harum libero mollitia voluptas? "
+      },
+      "settings": {
+        "theme": "bordered",
+        "imagePosition": "left"
+      },
+      "index": 2,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-22T11:23:16.002Z",
+      "updated_at": "2025-09-22T11:23:29.720Z",
+      "order": 3
+    },
+    {
+      "id": "297ec99c-c8b5-4b45-b686-6f7f5ac535de",
+      "post_id": 5,
+      "type": "title",
+      "content": {
+        "text": "AI-Powered University Applications: Transforming Student Success",
+        "level": "h2"
+      },
+      "settings": {
+        "alignment": "left",
+        "fontSize": "default",
+        "color": "default"
+      },
+      "index": 0,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-22T11:36:06.229Z",
+      "updated_at": "2025-09-22T11:36:06.229Z"
+    },
+    {
+      "id": "421b66f8-6757-4da3-9bb5-a361eb81e7d4",
+      "post_id": 5,
+      "type": "paragraph",
+      "content": {
+        "html": "<p>This isn’t science fiction – it’s the reality of AI-powered university applications transforming how students achieve their educational dreams.&nbsp; &nbsp; Today’s university application process has evolved beyond traditional methods. Students now harness artificial intelligence to discover perfect university matches, craft compelling personal statements, and navigate complex admission requirements with unprecedented precision. This technological revolution doesn’t replace human insight-it amplifies it, creating opportunities for students who previously faced significant barriers.&nbsp; &nbsp; The transformation is remarkable: students using AI-enhanced application strategies achieve acceptance rates exceeding 90%, compared to traditional methods hovering around 65%.&nbsp; &nbsp;At UAPP, we’ve witnessed this evolution firsthand, helping students from all countries leverage intelligent technology to unlock their educational potential.&nbsp; What Are AI-Powered University Applications? Think of AI-powered university applications as having a brilliant research assistant, writing coach, and strategic planner rolled into one intelligent system. These applications use advanced computer algorithms to analyse vast amounts of educational data, helping students make smarter decisions at every step of their university journey.&nbsp; &nbsp;</p>"
+      },
+      "settings": {
+        "alignment": "left",
+        "fontSize": "default"
+      },
+      "index": 1,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-22T11:36:06.229Z",
+      "updated_at": "2025-09-22T11:36:06.229Z"
+    },
+    {
+      "id": "31273822-5417-409b-bf0c-509bcd728896",
+      "post_id": 5,
+      "type": "image",
+      "content": {
+        "imageUrl": "https://res.cloudinary.com/drgot7znf/image/upload/v1757498948/pexels-olly-3807755_pfv2gp.jpg",
+        "alt": "",
+        "caption": "",
+        "link": "https://drive.google.com/drive/folders/16B3vSpWl3rBbtL2smDnJ5T_OdhbyuSjJ"
+      },
+      "settings": {
+        "alignment": "center",
+        "size": "medium"
+      },
+      "index": 2,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-22T11:36:06.229Z",
+      "updated_at": "2025-09-22T11:36:06.229Z"
+    },
+    {
+      "id": "a7ca8e8a-3658-40cf-80d6-b41cd8b3c4f0",
+      "post_id": 5,
+      "type": "button",
+      "content": {
+        "text": "Learn More",
+        "url": "https://drive.google.com/drive/folders/16B3vSpWl3rBbtL2smDnJ5T_OdhbyuSjJ",
+        "external": false
+      },
+      "settings": {
+        "style": "primary",
+        "size": "md",
+        "alignment": "left"
+      },
+      "index": 3,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-22T11:36:06.229Z",
+      "updated_at": "2025-09-22T11:36:06.229Z"
+    },
+    {
+      "id": "66072bb6-e6fd-408e-b78e-6cd10a6d4ce4",
+      "post_id": 5,
+      "type": "card",
+      "content": {
+        "title": "Card Title",
+        "content": "Card content goes here...",
+        "imageUrl": "",
+        "link": {
+          "url": "https://drive.google.com/drive/folders/16B3vSpWl3rBbtL2smDnJ5T_OdhbyuSjJ",
+          "text": "Learn More",
+          "external": true
+        },
+        "image": "https://res.cloudinary.com/drgot7znf/image/upload/v1757498948/pexels-olly-3807755_pfv2gp.jpg",
+        "description": " Breaking Down the Technology in Simple Terms: Smart University Matching. Imagine a system that knows your academic strengths, career dreams, and personal preferences, then searches through thousands of universities worldwide to find your perfect matches. AI matching goes beyond simple grade requirements-it considers factors like campus culture, graduate employment rates, and even climate preferences to suggest universities where you’ll truly thrive.    Strategic Timeline Management   University applications involve dozens of deadlines, document requirements, and country-specific regulations. AI systems create personalised calendars that track every requirement, send smart reminders, and optimise your application sequence for maximum success probability.    "
+      },
+      "settings": {
+        "theme": "default",
+        "imagePosition": "top"
+      },
+      "index": 4,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-22T11:36:06.229Z",
+      "updated_at": "2025-09-22T11:36:06.229Z"
+    },
+    {
+      "id": "864505eb-33fd-4217-92ea-aa23423f1a08",
+      "post_id": 6,
+      "type": "title",
+      "content": {
+        "text": "Lorem ipsum dolor",
+        "level": "h1"
+      },
+      "settings": {
+        "alignment": "left",
+        "fontSize": "default",
+        "color": "#007a63",
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "margin": {
+          "top": 0,
+          "right": 0,
+          "bottom": 16,
+          "left": 0
+        }
+      },
+      "index": 0,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-23T07:13:42.278Z",
+      "updated_at": "2025-09-24T09:43:53.993Z"
+    },
+    {
+      "id": "d69fb7fe-d454-4966-bf62-9de2555113d7",
+      "post_id": 6,
+      "type": "layout2",
+      "content": {
+        "columns": 2,
+        "columnWidths": [
+          50,
+          50
+        ],
+        "columnBlocks": [
+          [
+            {
+              "id": "8f5337e3-2349-46ed-bdaa-ff549273b97e",
+              "type": "paragraph",
+              "content": {
+                "html": "<p><span style=\"text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam aliquam ipsa magnam incidunt, architecto tempore dolorum maiores ratione ad eos doloremque porro nobis cumque non error voluptatem libero, facere vero suscipit impedit vel laborum! Voluptatibus, et id. Ipsum reprehenderit facilis exercitationem, placeat consequuntur saepe autem aut repudiandae mollitia, et eum!</span></p>"
+              },
+              "settings": {
+                "alignment": "justify",
+                "fontSize": "default",
+                "padding": {
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0,
+                  "left": 0
+                },
+                "margin": {
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 8,
+                  "left": 0
+                }
+              },
+              "order": 0
+            }
+          ],
+          [
+            {
+              "id": "612f580a-a621-41e1-9bfc-37e4fed849f7",
+              "type": "image",
+              "content": {
+                "imageUrl": "https://images.unsplash.com/photo-1731435265797-136ba0b95cda?q=80&w=576&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                "alt": "",
+                "caption": ""
+              },
+              "settings": {
+                "alignment": "right",
+                "size": "full",
+                "padding": {
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 0,
+                  "left": 0
+                },
+                "margin": {
+                  "top": 0,
+                  "right": 0,
+                  "bottom": 8,
+                  "left": 0
+                },
+                "shadow": true
+              },
+              "order": 0
+            }
+          ]
+        ]
+      },
+      "settings": {
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "margin": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "gap": 16,
+        "minHeight": 150
+      },
+      "index": 1,
+      "created_by": 1,
+      "updated_by": 1,
+      "created_at": "2025-09-23T07:13:42.278Z",
+      "updated_at": "2025-09-24T09:43:53.993Z"
+    }
+  ]
+}
