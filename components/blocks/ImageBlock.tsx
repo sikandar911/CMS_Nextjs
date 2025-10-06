@@ -95,14 +95,14 @@ export default function ImageBlock({
     return (
       <div className="space-y-4">
         {/* Settings Panel */}
-        <div className="p-3 bg-gray-50 rounded space-y-3">
+        <div className="p-4 bg-[#F1F4F3] rounded-xl border border-gray-200 space-y-3">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs text-gray-600 mb-1">Alignment</label>
               <select
                 value={alignment}
                 onChange={(e) => handleSettingsChange({ alignment: e.target.value })}
-                className="w-full px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+                className="w-full px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
                 aria-label="Image alignment"
               >
                 <option value="left">Left</option>
@@ -175,7 +175,7 @@ export default function ImageBlock({
               value={imageUrl}
               onChange={(e) => handleContentChange('imageUrl', e.target.value)}
               placeholder="https://example.com/image.jpg"
-              className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+              className="w-full p-3 border-2 border-[#045D5E] rounded-lg bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
             />
           </div>
 

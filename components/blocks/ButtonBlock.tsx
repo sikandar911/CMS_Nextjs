@@ -51,27 +51,27 @@ export default function ButtonBlock({
   }
 
   const getButtonClasses = () => {
-    const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
+    const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-offset-2 shadow-md hover:shadow-lg'
     
     const sizeClasses = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-      lg: 'px-6 py-3 text-lg'
+      sm: 'px-4 py-2 text-sm',
+      md: 'px-6 py-3 text-base',
+      lg: 'px-8 py-4 text-lg'
     }
 
     // separate background/interaction classes from text color so we can override text color
     const styleBgClasses: Record<string, string> = {
-      primary: 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
-      secondary: 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500',
-      outline: 'border border-blue-600 hover:bg-blue-50 focus:ring-blue-500 bg-transparent',
-      ghost: 'hover:bg-blue-50 focus:ring-blue-500 bg-transparent'
+      primary: 'bg-[#045D5E] hover:bg-[#034549] focus:ring-[#045D5E]',
+      secondary: 'bg-[#FC7300] hover:bg-[#e66800] focus:ring-[#FC7300]',
+      outline: 'border-2 border-[#045D5E] hover:bg-[#045D5E] hover:text-white focus:ring-[#045D5E] bg-transparent',
+      ghost: 'hover:bg-[#F1F4F3] focus:ring-[#045D5E] bg-transparent'
     }
 
     const styleDefaultText: Record<string, string> = {
       primary: 'text-white',
       secondary: 'text-white',
-      outline: 'text-blue-600',
-      ghost: 'text-blue-600'
+      outline: 'text-[#045D5E]',
+      ghost: 'text-[#045D5E]'
     }
 
     const alignmentClasses = {
@@ -116,14 +116,15 @@ export default function ButtonBlock({
     return (
       <div className="space-y-4">
         {/* Settings Panel */}
-        <div className="p-3 bg-gray-50 rounded space-y-3">
+        <div className="p-4 bg-[#F1F4F3] rounded-xl border border-gray-200 space-y-3">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs text-gray-600 mb-1">Style</label>
               <select
                 value={style}
                 onChange={(e) => handleSettingsChange({ style: e.target.value })}
-                className="w-full px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+                className="w-full px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
+                aria-label="Button style"
               >
                 <option value="primary">Primary</option>
                 <option value="secondary">Secondary</option>
@@ -137,7 +138,8 @@ export default function ButtonBlock({
               <select
                 value={size}
                 onChange={(e) => handleSettingsChange({ size: e.target.value })}
-                className="w-full px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+                className="w-full px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
+                aria-label="Button size"
               >
                 <option value="sm">Small</option>
                 <option value="md">Medium</option>
@@ -150,7 +152,8 @@ export default function ButtonBlock({
               <select
                 value={alignment}
                 onChange={(e) => handleSettingsChange({ alignment: e.target.value })}
-                className="w-full px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+                className="w-full px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
+                aria-label="Button alignment"
               >
                 <option value="left">Left</option>
                 <option value="center">Center</option>
@@ -181,7 +184,7 @@ export default function ButtonBlock({
               value={text}
               onChange={(e) => handleContentChange('text', e.target.value)}
               placeholder="Enter button text..."
-              className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+              className="w-full p-3 border-2 border-[#045D5E] rounded-lg bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
             />
           </div>
 

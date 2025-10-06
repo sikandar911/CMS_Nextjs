@@ -86,24 +86,24 @@ export default function AccordionBlock({
     switch (theme) {
       case 'bordered':
         return {
-          container: 'border border-gray-200 rounded-lg overflow-hidden',
-          item: 'border-b border-gray-200 last:border-b-0',
-          header: 'px-4 py-3 bg-white hover:bg-gray-50 cursor-pointer transition-colors duration-200',
-          content: 'px-4 py-3 bg-gray-50'
+          container: 'border-2 border-[#045D5E] rounded-xl overflow-hidden',
+          item: 'border-b-2 border-gray-200 last:border-b-0',
+          header: 'px-5 py-4 bg-white hover:bg-[#F1F4F3] cursor-pointer transition-colors duration-200',
+          content: 'px-5 py-4 bg-[#F1F4F3]'
         }
       case 'minimal':
         return {
           container: '',
-          item: 'mb-2',
-          header: 'py-2 cursor-pointer hover:text-blue-600 transition-colors duration-200 font-medium',
+          item: 'mb-3',
+          header: 'py-3 cursor-pointer hover:text-[#FC7300] transition-colors duration-200 font-semibold text-[#045D5E]',
           content: 'pt-2 pb-4'
         }
       default:
         return {
-          container: 'space-y-2',
-          item: 'bg-white border border-gray-200 rounded-lg overflow-hidden',
-          header: 'px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between',
-          content: 'px-4 py-3 border-t border-gray-200'
+          container: 'space-y-3',
+          item: 'bg-white border-2 border-gray-200 hover:border-[#045D5E] rounded-xl overflow-hidden transition-all duration-200',
+          header: 'px-5 py-4 cursor-pointer hover:bg-[#F1F4F3] transition-colors duration-200 flex items-center justify-between font-semibold text-[#045D5E]',
+          content: 'px-5 py-4 border-t-2 border-gray-200 bg-[#F1F4F3]'
         }
     }
   }
@@ -114,7 +114,7 @@ export default function AccordionBlock({
     return (
       <div className="space-y-4">
         {/* Settings Panel */}
-        <div className="p-3 bg-gray-50 rounded space-y-3">
+        <div className="p-4 bg-[#F1F4F3] rounded-xl border border-gray-200 space-y-3">
           <div className="flex gap-4">
             <div className="flex flex-col">
               <label className="text-xs text-gray-600 mb-1">Theme</label>
@@ -146,7 +146,7 @@ export default function AccordionBlock({
           <button
             type="button"
             onClick={handleAddItem}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-5 py-3 bg-[#FC7300] text-white rounded-xl hover:bg-[#e66800] transition-colors font-semibold shadow-md"
           >
             Add Accordion Item
           </button>

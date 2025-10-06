@@ -59,7 +59,7 @@ export default function CardBlock({
   }
 
   const getCardClasses = () => {
-    const base = 'rounded-lg overflow-hidden transition-all duration-200'
+    const base = 'rounded-xl overflow-hidden transition-all duration-200 border-2'
     const sizeClasses = {
       small: 'max-w-sm',
       medium: 'max-w-md',
@@ -69,13 +69,13 @@ export default function CardBlock({
     let themeClasses = ''
     switch (theme) {
       case 'elevated':
-        themeClasses = 'bg-white shadow-lg hover:shadow-xl'
+        themeClasses = 'bg-white border-[#045D5E] shadow-lg hover:shadow-xl'
         break
       case 'bordered':
-        themeClasses = 'bg-white border border-gray-200 hover:border-gray-300'
+        themeClasses = 'bg-white border-gray-200 hover:border-[#045D5E]'
         break
       default:
-        themeClasses = 'bg-white shadow-sm hover:shadow-md'
+        themeClasses = 'bg-white border-gray-200 shadow-md hover:shadow-lg'
     }
 
     return `${base} ${sizeClasses[size as keyof typeof sizeClasses]} ${themeClasses}`
@@ -92,7 +92,7 @@ export default function CardBlock({
     return (
       <div className="space-y-4">
         {/* Settings Panel */}
-        <div className="p-3 bg-gray-50 rounded space-y-3">
+        <div className="p-4 bg-[#F1F4F3] rounded-xl border border-gray-200 space-y-3">
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-xs text-gray-600 mb-1">Theme</label>
@@ -233,7 +233,7 @@ export default function CardBlock({
         {/* Content */}
         <div className={`p-4 ${imagePosition !== 'top' ? 'flex-1' : ''}`}>
           {title && (
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-bold text-[#045D5E] mb-3">
               {title}
             </h3>
           )}
@@ -249,7 +249,7 @@ export default function CardBlock({
               href={link.url}
               target={link.external ? '_blank' : '_self'}
               rel={link.external ? 'noopener noreferrer' : undefined}
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
+              className="inline-flex items-center text-[#FC7300] hover:text-[#e66800] font-semibold transition-colors"
             >
               {link.text}
               {link.external && (

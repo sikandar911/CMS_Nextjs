@@ -35,7 +35,7 @@ export default function TitleBlock({
 }: TitleBlockProps) {
   const {
     alignment = 'left',
-    color = '#1f2937',
+    color = '#045D5E',
     fontSize = '2xl',
     padding = { top: 0, right: 0, bottom: 0, left: 0 },
     margin = { top: 0, right: 0, bottom: 16, left: 0 }
@@ -103,7 +103,7 @@ export default function TitleBlock({
   }
 
   const commonClasses = `
-    font-bold leading-tight mb-4
+    font-bold leading-snug mb-4
     ${getTextSizeClass(fontSize)}
     ${getAlignmentClass(alignment)}
   `.trim()
@@ -131,7 +131,7 @@ export default function TitleBlock({
           <select
             value={normalizedLevel}
             onChange={(e) => handleLevelChange(e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+            className="px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] focus:border-[#FC7300] transition-colors"
           >
             <option value="h1">H1</option>
             <option value="h2">H2</option>
@@ -144,7 +144,7 @@ export default function TitleBlock({
           <select
             value={fontSize}
             onChange={(e) => handleSettingsChange({ fontSize: e.target.value })}
-            className="px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+            className="px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] focus:border-[#FC7300] transition-colors"
           >
             <option value="sm">Small</option>
             <option value="base">Base</option>
@@ -159,7 +159,7 @@ export default function TitleBlock({
           <select
             value={alignment}
             onChange={(e) => handleSettingsChange({ alignment: e.target.value })}
-            className="px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+            className="px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] focus:border-[#FC7300] transition-colors"
           >
             <option value="left">Left</option>
             <option value="center">Center</option>
@@ -193,7 +193,7 @@ export default function TitleBlock({
           }}
           onBlur={() => commitText(localText)}
           placeholder="Enter title..."
-          className="w-full p-2 border border-gray-300 rounded text-lg font-bold bg-white text-black focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          className="w-full p-3 border-2 border-[#045D5E] rounded-lg text-lg font-bold bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] focus:border-[#FC7300] focus:outline-none transition-all"
           style={style}
         />
       </div>

@@ -13,18 +13,18 @@ export default function HomePage() {
       <Navigation />
 
       {/* Full-screen Hero */}
-      <section className="relative h-screen w-full bg-gray-900 overflow-hidden">
-        {/* Background image (blurred) */}
-        <div className="absolute inset-0 -z-10">
+      <section className="relative h-screen w-full bg-gray-800 overflow-hidden">
+  {/* Background image (blurred) */}
+  <div className="absolute inset-0 z-0">
           <img
-            src="/hero-students.jpg"
+            src="https://res.cloudinary.com/drgot7znf/image/upload/v1759731839/photo-1758270704925-fa59d93119c1_kjdvqg.jpg"
             alt="Students studying"
             className="w-full h-full object-cover filter blur-sm brightness-75"
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
 
-  <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-start lg:items-center">
+  <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-start lg:items-center relative z-10">
           <div className="w-full grid grid-cols-12 gap-6 items-center">
             {/* Left Hero (Main content) */}
             <div className="col-span-12 lg:col-span-7 xl:col-span-7 pb-8 lg:pb-0">
@@ -89,7 +89,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-
+           
             {/* Right-middle overlay form (will appear over hero) */}
             <div className="col-span-12 lg:col-span-5 xl:col-span-4 relative">
               <div className="hidden lg:block">

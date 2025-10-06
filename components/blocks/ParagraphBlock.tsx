@@ -24,7 +24,7 @@ export default function ParagraphBlock({
     maxWidth = '100%',
     alignment = 'left',
     fontSize = 'base',
-    lineHeight = 'normal'
+    lineHeight = 'relaxed'
   } = settings
 
   const { html = '<p>Enter your paragraph text...</p>' } = content
@@ -72,10 +72,12 @@ export default function ParagraphBlock({
   }
 
   const containerClasses = `
-    prose prose-gray max-w-none
+    prose prose-slate max-w-none
     ${getAlignmentClass(alignment)}
     ${getFontSizeClass(fontSize)}
     ${getLineHeightClass(lineHeight)}
+    prose-headings:text-[#045D5E] prose-a:text-[#FC7300] prose-a:no-underline hover:prose-a:underline
+    prose-strong:text-[#045D5E] prose-p:text-gray-700
   `.trim()
 
   const containerStyle = {
@@ -86,13 +88,13 @@ export default function ParagraphBlock({
     return (
       <div className="space-y-4">
         {/* Settings Panel */}
-        <div className="flex flex-wrap gap-4 mb-2 p-3 bg-gray-50 rounded">
+        <div className="flex flex-wrap gap-4 mb-2 p-4 bg-[#F1F4F3] rounded-xl border border-gray-200">
           <div className="flex flex-col">
             <label className="text-xs text-gray-600 mb-1">Max Width</label>
             <select
               value={maxWidth}
               onChange={(e) => handleSettingsChange({ maxWidth: e.target.value })}
-              className="px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+              className="px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
             >
               <option value="100%">Full Width</option>
               <option value="760px">760px</option>
@@ -107,7 +109,7 @@ export default function ParagraphBlock({
             <select
               value={alignment}
               onChange={(e) => handleSettingsChange({ alignment: e.target.value })}
-              className="px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+              className="px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
             >
               <option value="left">Left</option>
               <option value="center">Center</option>
@@ -121,7 +123,7 @@ export default function ParagraphBlock({
             <select
               value={fontSize}
               onChange={(e) => handleSettingsChange({ fontSize: e.target.value })}
-              className="px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+              className="px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
             >
               <option value="sm">Small</option>
               <option value="base">Base</option>
@@ -135,7 +137,7 @@ export default function ParagraphBlock({
             <select
               value={lineHeight}
               onChange={(e) => handleSettingsChange({ lineHeight: e.target.value })}
-              className="px-3 py-1 border border-gray-300 rounded text-sm bg-white text-black"
+              className="px-3 py-2 border-2 border-[#045D5E] rounded-lg text-sm bg-white text-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
             >
               <option value="tight">Tight</option>
               <option value="normal">Normal</option>
@@ -152,7 +154,7 @@ export default function ParagraphBlock({
               <button
                 type="button"
                 onClick={() => document.execCommand('bold')}
-                className="px-3 text-sm font-medium text-black bg-white border border-black rounded hover:bg-gray-200"
+                className="px-3 py-1 text-sm font-medium text-[#045D5E] bg-white border-2 border-[#045D5E] rounded-lg hover:bg-[#045D5E] hover:text-white transition-colors"
               >
                 <strong>B</strong>
               </button>
@@ -190,7 +192,7 @@ export default function ParagraphBlock({
             contentEditable
             dangerouslySetInnerHTML={{ __html: html }}
             onBlur={(e) => handleContentChange(e.currentTarget.innerHTML)}
-            className={`p-3 min-h-[100px] outline-none bg-white text-black ${containerClasses}`}
+            className={`p-4 min-h-[120px] outline-none bg-white text-gray-700 rounded-b-lg ${containerClasses}`}
             style={containerStyle}
           />
         </div>

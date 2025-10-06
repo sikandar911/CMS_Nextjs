@@ -75,41 +75,41 @@ export default function TabBlock({
   }
 
   const getTabListClasses = () => {
-    const base = orientation === 'horizontal' ? 'flex' : 'flex flex-col'
+    const base = orientation === 'horizontal' ? 'flex flex-wrap' : 'flex flex-col'
     
     switch (theme) {
       case 'pills':
-        return `${base} gap-2 p-1 bg-gray-100 rounded-lg`
+        return `${base} gap-2 p-2 bg-[#F1F4F3] rounded-xl`
       case 'underline':
-        return `${base} border-b border-gray-200`
+        return `${base} border-b-2 border-gray-200`
       default:
-        return `${base} border-b border-gray-200`
+        return `${base} border-b-2 border-gray-200`
     }
   }
 
   const getTabButtonClasses = (isActive: boolean) => {
-    const base = 'px-4 py-2 font-medium text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+    const base = 'px-5 py-3 font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FC7300] focus:ring-offset-2'
     
     switch (theme) {
       case 'pills':
         return isActive
-          ? `${base} bg-white text-blue-600 rounded-md shadow-sm`
-          : `${base} text-gray-600 hover:text-gray-900 rounded-md hover:bg-white/50`
+          ? `${base} bg-white text-[#045D5E] rounded-xl shadow-md border-2 border-[#045D5E]`
+          : `${base} text-gray-600 hover:text-[#045D5E] rounded-xl hover:bg-white/70`
       case 'underline':
         return isActive
-          ? `${base} text-blue-600 border-b-2 border-blue-600`
-          : `${base} text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300`
+          ? `${base} text-[#045D5E] border-b-4 border-[#FC7300]`
+          : `${base} text-gray-500 hover:text-[#045D5E] border-b-4 border-transparent hover:border-gray-300`
       default:
         return isActive
-          ? `${base} text-blue-600 border-b-2 border-blue-600 -mb-px`
-          : `${base} text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 -mb-px`
+          ? `${base} text-[#045D5E] border-b-4 border-[#FC7300] -mb-0.5`
+          : `${base} text-gray-500 hover:text-[#045D5E] border-b-4 border-transparent hover:border-gray-300 -mb-0.5`
     }
   }
 
   const getContentClasses = () => {
     return orientation === 'horizontal' 
-      ? 'mt-4' 
-      : 'ml-4 flex-1'
+      ? 'mt-6 p-5 bg-white rounded-xl border-2 border-gray-200' 
+      : 'ml-6 p-5 flex-1 bg-white rounded-xl border-2 border-gray-200'
   }
 
   const containerClasses = orientation === 'vertical' 
@@ -120,7 +120,7 @@ export default function TabBlock({
     return (
       <div className="space-y-4">
         {/* Settings Panel */}
-        <div className="p-3 bg-gray-50 rounded space-y-3">
+        <div className="p-4 bg-[#F1F4F3] rounded-xl border border-gray-200 space-y-3">
           <div className="flex gap-4">
             <div className="flex flex-col">
               <label className="text-xs text-gray-600 mb-1">Theme</label>
@@ -153,7 +153,7 @@ export default function TabBlock({
           <button
             type="button"
             onClick={handleAddTab}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-5 py-3 bg-[#FC7300] text-white rounded-xl hover:bg-[#e66800] transition-colors font-semibold shadow-md"
           >
             Add Tab
           </button>
