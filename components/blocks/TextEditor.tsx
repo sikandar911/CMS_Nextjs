@@ -5,6 +5,9 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
+// Text alignment extension
+// @ts-ignore
+import TextAlign from '@tiptap/extension-text-align'
 // TypeScript sometimes complains about missing declaration files for Tiptap table
 // extensions. These imports are correct at runtime; ignore TS declaration errors.
 // @ts-ignore
@@ -130,6 +133,25 @@ const MenuBar = ({ editor }: { editor: any }) => {
     }
   }
 
+  // Determine current alignment for the selection (paragraph or heading)
+  const getSelectionAlignment = () => {
+    try {
+      const p = editor.getAttributes('paragraph')
+      if (p && p.textAlign) return p.textAlign
+      const h = editor.getAttributes('heading')
+      if (h && h.textAlign) return h.textAlign
+    } catch (e) {
+      // ignore
+    }
+    return 'left'
+  }
+
+  const handleAlignmentChange = (value: string) => {
+    // Apply alignment to the blocks currently selected. This won't change the whole document.
+    if (!value) return
+    editor.chain().focus().setTextAlign(value as any).run()
+  }
+
   return (
     <>
       <div className="sticky top-0 z-10 bg-white border-b-2 border-gray-200 p-2 mb-4 shadow-sm rounded-t-xl">
@@ -192,6 +214,21 @@ const MenuBar = ({ editor }: { editor: any }) => {
               <option value="h1">Heading 1</option>
               <option value="h2">Heading 2</option>
               <option value="h3">Heading 3</option>
+            </select>
+          </div>
+
+          {/* Alignment Dropdown - applies only to current selection */}
+          <div className="flex items-center gap-1 pr-2 border-r border-gray-300">
+            <select
+              value={getSelectionAlignment()}
+              onChange={(e) => handleAlignmentChange(e.target.value)}
+              className="px-3 py-2 rounded-lg text-sm font-semibold transition-colors border-2 border-[#045D5E] bg-white text-[#045D5E] hover:bg-[#F1F4F3] focus:ring-2 focus:ring-[#FC7300] cursor-pointer"
+              title="Text Alignment"
+            >
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+              <option value="justify">Justify</option>
             </select>
           </div>
 
@@ -387,6 +424,8 @@ const MenuBar = ({ editor }: { editor: any }) => {
               type="number"
               value={tableRows}
               onChange={(e) => setTableRows(Math.max(1, parseInt(e.target.value) || 1))}
+              aria-label="Number of rows"
+              placeholder="3"
               min="1"
               max="20"
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
@@ -398,6 +437,8 @@ const MenuBar = ({ editor }: { editor: any }) => {
               type="number"
               value={tableCols}
               onChange={(e) => setTableCols(Math.max(1, parseInt(e.target.value) || 1))}
+              aria-label="Number of columns"
+              placeholder="3"
               min="1"
               max="10"
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-[#045D5E] focus:ring-2 focus:ring-[#FC7300] transition-all"
@@ -453,6 +494,7 @@ export default function TextEditor({
           class: 'max-w-full h-auto rounded-lg',
         },
       }),
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Table.configure({
         resizable: true,
         HTMLAttributes: {
@@ -592,6 +634,7 @@ export function ReadOnlyTextRenderer({ content }: { content: any }) {
           class: 'max-w-full h-auto rounded-lg',
         },
       }),
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Table.configure({
         HTMLAttributes: {
           class: 'border-collapse table-auto w-full border border-gray-300',

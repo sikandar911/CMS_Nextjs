@@ -170,3 +170,39 @@ html {
     width: 100%;
   }
 }
+
+/* Marquee/continuous slider keyframes */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Fixed marquee utility classes (used by the hero slider) */
+.animate-marquee-12 {
+  animation: marquee 12s linear infinite;
+}
+.animate-marquee-18 {
+  animation: marquee 18s linear infinite;
+}
+.animate-marquee-24 {
+  animation: marquee 24s linear infinite;
+}
+.animate-marquee-30 {
+  animation: marquee 30s linear infinite;
+}
+
+/* Hide scrollbars for the blog slider while preserving scroll functionality */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* Cursor states for drag interaction */
+.blog-slider { cursor: grab; }
+.blog-slider:active { cursor: grabbing; }
+
+/* Make sure horizontal scrolling snaps nicely on touch devices */
+.blog-slider { -webkit-overflow-scrolling: touch; }

@@ -98,7 +98,7 @@ export default function BlockRenderer({
       return (
         <div
           key={block.id}
-          className="block-editor-wrapper group relative mb-6 p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
+          className={`block-editor-wrapper group relative my-4 sm:my-0 px-4 sm:px-0 p-4 sm:p-0 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors`}
           data-block-id={block.id}
           data-block-type={block.type}
         >
@@ -146,17 +146,17 @@ export default function BlockRenderer({
           </div>
 
           {/* Block Content */}
-          <div className="block-content">
+          <div className="block-content prose max-w-none">
             {blockElement}
           </div>
         </div>
       )
     }
 
-    // For display mode, just return the block with spacing
+    // For display mode, wrap with mobile-only spacing and typography
     return (
-      <div key={block.id} className="mb-6">
-        {blockElement}
+      <div key={block.id} className="my-4 sm:my-0 px-4 sm:px-0">
+        <div className="prose max-w-none">{blockElement}</div>
       </div>
     )
   }
@@ -178,8 +178,12 @@ export default function BlockRenderer({
     return null
   }
 
+  const containerClass = isEditor
+    ? 'block-renderer editor-mode mx-auto px-2 my-1 sm:my-1 font-sans text-gray-800 space-y-6'
+    : 'block-renderer display-mode mx-auto px-2 my-1 sm:my-1 font-sans text-gray-800 '
+
   return (
-    <div className={`block-renderer ${isEditor ? 'editor-mode' : 'display-mode'}`}>
+    <div className={containerClass}>
       {sortedBlocks.map((block, index) => renderBlock(block, index))}
     </div>
   )

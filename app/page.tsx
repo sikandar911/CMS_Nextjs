@@ -3,6 +3,7 @@ import Link from 'next/link'
 import ReadingNow from '@/components/ReadingNow'
 import FollowJourney from '@/components/FollowJourney'
 import { postsApi } from '@/lib/api'
+import BlogSlider from '@/components/BlogSlider'
 
 export default function HomePage() {
   // Server-side fetch of posts to pass into the client component
@@ -34,47 +35,20 @@ export default function HomePage() {
                     Featured Article
                   </span>
                 </div>
-
+            
+                {/* blog slider  */}
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">
-                  UK University Applications 2024: Complete Step-by-Step Guide
+                  Blogs, Updates and News
                 </h1>
 
                 <p className="text-lg md:text-xl text-white/90 mb-6">
-                  Get the insider secrets that helped 15,000+ students secure their dream university places. Everything from UCAS to interviews covered.
+                  Keep yourself updated about latest developments in higher education industry through our range of articles and news updates.
                 </p>
 
-                <div className="flex flex-wrap items-center text-white/90 gap-6 mb-8">
-                  <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="text-sm">Dec 15, 2024</span>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-sm">12 min read</span>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span className="text-sm">Dr. Mitchell</span>
-                  </div>
-                </div>
-
-                <div className="mt-6">
-                  <a href="#" className="inline-flex items-center gap-3 px-5 py-3 rounded-md bg-[#EF623C] text-white font-medium shadow hover:opacity-95">
-                    Read Full Article
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </a>
-                </div>
-
+                {/* Blog slider (client component) */}
+                <BlogSlider posts={allPosts} />
+              {/* blog slider  end */}
+                
                 {/* Mobile CTA - moved inside left hero so it stacks under content on small screens */}
                 <div className="block lg:hidden mt-6">
                   <div className="w-full bg-[#F8FAFC] rounded-xl shadow p-4">

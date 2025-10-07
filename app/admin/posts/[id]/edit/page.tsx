@@ -299,11 +299,10 @@ export default function EditPost() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                       title="Select category"
                     >
-                      <option value="General">General</option>
-                      <option value="Technology">Technology</option>
-                      <option value="Business">Business</option>
-                      <option value="Lifestyle">Lifestyle</option>
-                      <option value="Travel">Travel</option>
+                      <option value="Student Life">Student Life</option>
+                      <option value="Application Process">Application Process</option>
+                      <option value="Student Visa">Student Visa</option>
+                      <option value="UK Universities">UK Universities</option>
                     </select>
                   </div>
 

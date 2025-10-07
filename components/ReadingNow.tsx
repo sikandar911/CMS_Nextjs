@@ -15,15 +15,35 @@ interface Post {
 export default function ReadingNow({ initialPosts }: { initialPosts: Post[] }) {
   const POSTS_PER_PAGE = 6
   const [page, setPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
 
   // Reset to first page if the incoming posts change
   useEffect(() => {
     setPage(1)
   }, [initialPosts])
 
-  const totalPages = Math.max(1, Math.ceil(initialPosts.length / POSTS_PER_PAGE))
+  // reset page when filters change
+  useEffect(() => {
+    setPage(1)
+  }, [searchTerm, selectedCategory])
+
+  // compute filtered posts based on search and category
+  const normalizedSearch = searchTerm.trim().toLowerCase()
+  const filteredPosts = initialPosts.filter((p) => {
+    const matchesCategory = selectedCategory ? (p.category === selectedCategory) : true
+    if (!normalizedSearch) return matchesCategory
+    const inTitle = (p.title || '').toLowerCase().includes(normalizedSearch)
+    const inExcerpt = (p.excerpt || '').toLowerCase().includes(normalizedSearch)
+    return matchesCategory && (inTitle || inExcerpt)
+  })
+
+  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_PAGE))
   const start = (page - 1) * POSTS_PER_PAGE
-  const pagedPosts = initialPosts.slice(start, start + POSTS_PER_PAGE)
+  const pagedPosts = filteredPosts.slice(start, start + POSTS_PER_PAGE)
+
+  // derive available categories from posts (unique)
+  const categories = Array.from(new Set(initialPosts.map(p => p.category).filter(Boolean)))
 
   return (
     
@@ -37,6 +57,32 @@ export default function ReadingNow({ initialPosts }: { initialPosts: Post[] }) {
             <h2 className="text-2xl font-bold text-gray-900">What Students Are Reading Now</h2>
           </div>
           <p className="text-gray-600 mt-2">Join thousands of students accessing the most valuable content this week</p>
+          <div className="mt-4 flex flex-col sm:flex-row items-center gap-3 justify-center">
+            <div className="w-full sm:w-80">
+              <input
+                aria-label="Search posts"
+                placeholder="Search by title or excerpt"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md bg-white"
+                style={{ color: 'black' }}
+              />
+            </div>
+            <div>
+              <select
+                aria-label="Filter by category"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-3 py-2 border rounded-md bg-white"
+                 style={{ color: 'black' }}
+              >
+                <option value="">All categories</option>
+                {categories.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
