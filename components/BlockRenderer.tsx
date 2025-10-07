@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import TitleBlock from './blocks/TitleBlock'
-import ParagraphBlock from './blocks/ParagraphBlock'
+import TextEditor from './blocks/TextEditor'
 import AccordionBlock from './blocks/AccordionBlock'
 import TabBlock from './blocks/TabBlock'
 import CardBlock from './blocks/CardBlock'
@@ -27,8 +26,9 @@ interface BlockRendererProps {
 }
 
 const BLOCK_COMPONENTS = {
-  title: TitleBlock,
-  paragraph: ParagraphBlock,
+  title: TextEditor,
+  paragraph: TextEditor,
+  texteditor: TextEditor,
   accordion: AccordionBlock,
   tabs: TabBlock,
   card: CardBlock,
@@ -187,16 +187,15 @@ export default function BlockRenderer({
 
 // Export block types for use in other components
 export const AVAILABLE_BLOCK_TYPES = [
-  { type: 'title', label: 'Title/Heading', icon: '' },
-  { type: 'paragraph', label: 'Paragraph', icon: '' },
-  { type: 'image', label: 'Image', icon: '' },
-  { type: 'button', label: 'Button', icon: '' },
-  { type: 'card', label: 'Card', icon: '' },
-  { type: 'accordion', label: 'Accordion', icon: '' },
-  { type: 'tabs', label: 'Tabs', icon: '' },
-  { type: 'layout2', label: '2-Column Layout', icon: '' },
-  { type: 'layout3', label: '3-Column Layout', icon: '' },
-  { type: 'layout4', label: '4-Column Layout', icon: '' },
+  { type: 'texteditor', label: 'Rich Text Editor', icon: '📝' },
+  { type: 'image', label: 'Image', icon: '🖼️' },
+  { type: 'button', label: 'Button', icon: '🔘' },
+  { type: 'card', label: 'Card', icon: '📄' },
+  { type: 'accordion', label: 'Accordion', icon: '📋' },
+  { type: 'tabs', label: 'Tabs', icon: '📑' },
+  { type: 'layout2', label: '2-Column Layout', icon: '📊' },
+  { type: 'layout3', label: '3-Column Layout', icon: '📈' },
+  { type: 'layout4', label: '4-Column Layout', icon: '📉' },
 ]
 
 export type { BlockData }
