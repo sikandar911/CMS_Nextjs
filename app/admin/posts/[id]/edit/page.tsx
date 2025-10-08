@@ -19,6 +19,7 @@ interface Post {
   tags: string[]
   category: string
   canonical_url?: string
+  featured_image?: string
   published_at?: string
 }
 
@@ -359,6 +360,31 @@ export default function EditPost() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Brief description of the post"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Featured Image URL
+                  </label>
+                  <input
+                    type="url"
+                    value={post.featured_image || ''}
+                    onChange={(e) => handlePostChange('featured_image', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  {post.featured_image && (
+                    <div className="mt-2">
+                      <img
+                        src={post.featured_image}
+                        alt="Featured image preview"
+                        className="w-32 h-20 object-cover rounded-md border border-gray-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none'
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Block Editor */}

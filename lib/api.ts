@@ -35,6 +35,7 @@ export interface Post {
   published_at: string | null
   meta_title: string
   meta_description: string
+  featured_image?: string
   featured_image_id: number | null
   language: string
   created_at: string

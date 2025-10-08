@@ -63,40 +63,37 @@ export default function LayoutBlock({
   // Local debounced content state to avoid re-render on every keystroke in nested inputs
   const [localContent, setLocalContent] = useState(content)
   const debounceRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Store onUpdate and settings in refs to avoid recreating callbacks
+  const onUpdateRef = useRef(onUpdate)
+  const settingsRef = useRef(settings)
+  
+  useEffect(() => {
+    onUpdateRef.current = onUpdate
+    settingsRef.current = settings
+  }, [onUpdate, settings])
 
   // Sync localContent when parent provides externally changed content (e.g. undo at higher level)
+  // Only update if the reference actually changed from parent, not from our own updates
   useEffect(() => {
-    // Shallow compare key arrays length / columns to decide if update necessary
-    if (content !== localContent) {
-      // Avoid unnecessary updates if structurally identical
-      const prevSig = JSON.stringify({
-        columns: localContent.columns,
-        widths: localContent.columnWidths,
-        counts: localContent.columnBlocks.map(b => b.length)
-      })
-      const nextSig = JSON.stringify({
-        columns: content.columns,
-        widths: content.columnWidths,
-        counts: content.columnBlocks.map(b => b.length)
-      })
-      if (prevSig !== nextSig) {
-        setLocalContent(content)
-      }
-    }
-  }, [content, localContent])
+    setLocalContent(content)
+  }, [content])
 
   const scheduleParentUpdate = useCallback((nextContent: any, immediate = false) => {
     setLocalContent(nextContent)
-    if (!onUpdate) return
+    const updateFn = onUpdateRef.current
+    if (!updateFn) return
     if (debounceRef.current) clearTimeout(debounceRef.current)
     if (immediate) {
-      onUpdate(nextContent, settings)
+      updateFn(nextContent, settingsRef.current)
       return
     }
     debounceRef.current = setTimeout(() => {
-      onUpdate(nextContent, settings)
-    }, 300)
-  }, [onUpdate, settings])
+      if (onUpdateRef.current) {
+        onUpdateRef.current(nextContent, settingsRef.current)
+      }
+    }, 500) // Increased debounce to 500ms to reduce re-renders
+  }, []) // Empty deps - truly stable callback
   
   // Close all popups when clicking outside
   const closeAllPopups = () => {
@@ -140,6 +137,9 @@ export default function LayoutBlock({
   }, [localContent, scheduleParentUpdate])
 
   // Sortable nested block component
+  // Wrapped in React.memo with a custom comparator to avoid re-renders when
+  // the block identity, content or settings haven't changed. This helps
+  // prevent parent re-renders from causing focus loss inside nested inputs.
   const SortableNestedBlock = React.memo(function SortableNestedBlock({ block, columnIndex }: { block: any, columnIndex: number }) {
     const {
       attributes,
@@ -207,6 +207,28 @@ export default function LayoutBlock({
         </div>
       </div>
     )
+  }
+  , (prevProps: { block: any, columnIndex: number }, nextProps: { block: any, columnIndex: number }) => {
+    // If column changed, re-render
+    if (prevProps.columnIndex !== nextProps.columnIndex) return false
+
+    const prevBlock = prevProps.block || {}
+    const nextBlock = nextProps.block || {}
+
+    // If block identity changed, re-render
+    if (prevBlock.id !== nextBlock.id) return false
+
+    // If block type changed, re-render
+    if (prevBlock.type !== nextBlock.type) return false
+
+    // Compare content and settings by reference. Parent updates should
+    // create new objects when actual changes happen, so reference
+    // equality is a good cheap check to avoid unnecessary renders.
+    if (prevBlock.content !== nextBlock.content) return false
+    if (prevBlock.settings !== nextBlock.settings) return false
+
+    // No meaningful changes -> skip re-render
+    return true
   })
 
   const {
@@ -267,38 +289,64 @@ export default function LayoutBlock({
   }
 
   const updateBlockInColumn = useCallback((columnIndex: number, blockId: string, blockContent: any, blockSettings: any) => {
-    const newColumnBlocks = [...columnBlocks]
-    const blockIndex = newColumnBlocks[columnIndex].findIndex(block => block.id === blockId)
-    if (blockIndex !== -1) {
-      newColumnBlocks[columnIndex][blockIndex] = {
-        ...newColumnBlocks[columnIndex][blockIndex],
-        content: blockContent,
-        settings: blockSettings
+    setLocalContent((prevContent) => {
+      const newColumnBlocks = [...prevContent.columnBlocks]
+      const blockIndex = newColumnBlocks[columnIndex].findIndex(block => block.id === blockId)
+      if (blockIndex !== -1) {
+        newColumnBlocks[columnIndex] = [...newColumnBlocks[columnIndex]]
+        newColumnBlocks[columnIndex][blockIndex] = {
+          ...newColumnBlocks[columnIndex][blockIndex],
+          content: blockContent,
+          settings: blockSettings
+        }
+        return { ...prevContent, columnBlocks: newColumnBlocks }
       }
-      scheduleParentUpdate({ ...localContent, columnBlocks: newColumnBlocks })
-    }
-  }, [columnBlocks, localContent, scheduleParentUpdate])
+      return prevContent
+    })
+    
+    // Debounce the parent update separately using refs
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      setLocalContent((currentContent) => {
+        if (onUpdateRef.current) {
+          onUpdateRef.current(currentContent, settingsRef.current)
+        }
+        return currentContent
+      })
+    }, 500)
+  }, []) // Empty deps - truly stable callback
 
   const deleteBlockFromColumn = useCallback((columnIndex: number, blockId: string) => {
-    // Store the deleted block for undo
-    const deletedBlock = columnBlocks[columnIndex].find(block => block.id === blockId)
-    if (deletedBlock) {
-      const undoAction = {
-        action: 'deleteBlock',
-        data: { columnIndex, block: deletedBlock, position: columnBlocks[columnIndex].findIndex(block => block.id === blockId) },
-        timestamp: Date.now()
+    setLocalContent((prevContent) => {
+      const columnBlocks = prevContent.columnBlocks
+      // Store the deleted block for undo
+      const deletedBlock = columnBlocks[columnIndex].find(block => block.id === blockId)
+      if (deletedBlock) {
+        const undoAction = {
+          action: 'deleteBlock',
+          data: { columnIndex, block: deletedBlock, position: columnBlocks[columnIndex].findIndex(block => block.id === blockId) },
+          timestamp: Date.now()
+        }
+        setUndoStack(prev => [undoAction, ...prev.slice(0, 4)]) // Keep last 5 actions
+        setShowUndo(true)
+        setTimeout(() => setShowUndo(false), 5000) // Hide undo after 5 seconds
       }
-      setUndoStack(prev => [undoAction, ...prev.slice(0, 4)]) // Keep last 5 actions
-      setShowUndo(true)
-      setTimeout(() => setShowUndo(false), 5000) // Hide undo after 5 seconds
-    }
 
-    const newColumnBlocks = [...columnBlocks]
-    newColumnBlocks[columnIndex] = newColumnBlocks[columnIndex]
-      .filter(block => block.id !== blockId)
-      .map((block, index) => ({ ...block, order: index }))
-    scheduleParentUpdate({ ...localContent, columnBlocks: newColumnBlocks })
-  }, [columnBlocks, localContent, scheduleParentUpdate, setUndoStack, setShowUndo])
+      const newColumnBlocks = [...columnBlocks]
+      newColumnBlocks[columnIndex] = newColumnBlocks[columnIndex]
+        .filter(block => block.id !== blockId)
+        .map((block, index) => ({ ...block, order: index }))
+      
+      const newContent = { ...prevContent, columnBlocks: newColumnBlocks }
+      
+      // Update parent immediately for deletions using ref
+      if (onUpdateRef.current) {
+        onUpdateRef.current(newContent, settingsRef.current)
+      }
+      
+      return newContent
+    })
+  }, []) // Empty deps - truly stable callback
 
   const undoLastAction = () => {
     if (undoStack.length === 0) return
@@ -321,9 +369,12 @@ export default function LayoutBlock({
   }
 
   const handleSettingsChange = (newSettings: any) => {
-    if (!onUpdate) return
+    const updateFn = onUpdateRef.current
+    if (!updateFn) return
     // Settings changes can be immediate; they don't cause input focus loss issues
-    onUpdate(localContent, { ...settings, ...newSettings })
+    const mergedSettings = { ...settingsRef.current, ...newSettings }
+    settingsRef.current = mergedSettings
+    updateFn(localContent, mergedSettings)
   }
 
   const containerStyle = {

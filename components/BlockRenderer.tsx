@@ -197,9 +197,9 @@ export const AVAILABLE_BLOCK_TYPES = [
   { type: 'card', label: 'Card', icon: '📄' },
   { type: 'accordion', label: 'Accordion', icon: '📋' },
   { type: 'tabs', label: 'Tabs', icon: '📑' },
-  { type: 'layout2', label: '2-Column Layout', icon: '📊' },
-  { type: 'layout3', label: '3-Column Layout', icon: '📈' },
-  { type: 'layout4', label: '4-Column Layout', icon: '📉' },
+  { type: 'layout2', label: '2-Column Layout', icon: '' },
+  { type: 'layout3', label: '3-Column Layout', icon: '' },
+  { type: 'layout4', label: '4-Column Layout', icon: '' },
 ]
 
 export type { BlockData }

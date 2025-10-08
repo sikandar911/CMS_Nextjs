@@ -8,7 +8,7 @@ export default function Navigation() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-white">Dynamic Blog</h1>
+              <h1 className="text-xl font-bold text-white">UAPP</h1>
             </Link>
           </div>
 

@@ -10,6 +10,7 @@ interface Post {
   category?: string
   published_at?: string | null
   created_at?: string
+  featured_image?: string
 }
 
 export default function ReadingNow({ initialPosts }: { initialPosts: Post[] }) {
@@ -91,23 +92,82 @@ export default function ReadingNow({ initialPosts }: { initialPosts: Post[] }) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {pagedPosts.map((post) => (
-          <article key={post.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="relative h-44 bg-gray-200">
-              <img src={`/images/post-${post.id}.jpg`} alt={post.title} className="w-full h-full object-cover" />
-              <span className="absolute left-4 bottom-4 inline-flex items-center px-3 py-1 rounded-full bg-[#1C334D] text-white text-sm">
-                {post.category || 'Article'}
-              </span>
-            </div>
-
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{post.title}</h3>
-              <p className="text-sm text-gray-600 mb-4">{post.excerpt}</p>
-              <div className="flex items-center justify-between">
-                <a href={`/blog/${post.slug}`} className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#EF623C] text-white text-sm">Read More</a>
-                <div className="text-sm text-gray-500">{new Date(post.published_at || post.created_at || '').toLocaleDateString()}</div>
+            <article
+              key={post.id}
+              style={{
+                backgroundColor: '#ffffff',
+                borderRadius: '0.5rem',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                overflow: 'hidden',
+                transform: 'none',
+                transition: 'transform 500ms ease-out, box-shadow 500ms ease-out',
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement
+                el.style.transform = 'translateY(-4px) scale(1.01)'
+                el.style.boxShadow = '0 20px 40px rgba(0,0,0,0.12)'
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement
+                el.style.transform = 'none'
+                el.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)'
+              }}
+            >
+              <div className="relative h-44 bg-gray-100">
+                <img
+                  src={post.featured_image || 'https://res.cloudinary.com/drgot7znf/image/upload/v1759752597/blog_image_a2jalg.jpg'}
+                  alt={post.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+                <span
+                  style={{
+                    position: 'absolute',
+                    left: '1rem',
+                    bottom: '1rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: '9999px',
+                    backgroundColor: '#045B5C',
+                    color: '#ffffff',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  {post.category || 'Article'}
+                </span>
               </div>
-            </div>
-          </article>
+
+              <div className="p-4 flex-1 flex flex-col">
+                <h3 className="text-base font-semibold text-gray-900 mb-2">
+                  {post.title}
+                </h3>
+
+                <p
+                  className="text-sm text-gray-600 mb-4"
+                  style={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {post.excerpt}
+                </p>
+
+                {/* Footer anchored to bottom */}
+                <div className="mt-auto flex items-center justify-between">
+                  <a
+                    href={`/blog/${post.slug}`}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#EF623C] text-white text-sm no-underline"
+                  >
+                    Read More
+                  </a>
+                  <div className="text-sm text-gray-500">
+                    {new Date(post.published_at || post.created_at || '').toLocaleDateString()}
+                  </div>
+                </div>
+              </div>
+            </article>
               ))}
             </div>
 
