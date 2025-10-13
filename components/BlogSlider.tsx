@@ -3,8 +3,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
-export default function BlogSlider({ posts }: { posts?: any[] }) {
-  const latest = (posts || []).slice().sort((a, b) => (b.id || 0) - (a.id || 0)).slice(0, 5)
+export default function BlogSlider({ posts }: { posts?: any }) {
+  // Normalize posts to an array to guard against unexpected shapes
+  const postsArray: any[] = (() => {
+    if (!posts) return []
+    if (Array.isArray(posts)) return posts
+    // Common wrappers (e.g. data: [...])
+    if (posts && Array.isArray((posts as any).data)) return (posts as any).data
+    // If it's an object map, return its values
+    if (typeof posts === 'object') return Object.values(posts)
+    return []
+  })()
+
+  // Filter out null/invalid entries before sorting
+  const validPosts = postsArray.filter((p) => p && typeof p === 'object')
+  const latest = validPosts.slice().sort((a, b) => (Number(b?.id) || 0) - (Number(a?.id) || 0)).slice(0, 5)
   const items = latest.concat(latest)
 
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -124,13 +137,15 @@ export default function BlogSlider({ posts }: { posts?: any[] }) {
         role="region"
         aria-label="Latest blog posts slider"
       >
-        {items.map((post: any, idx: number) => (
-          <article key={`${post.id}-${idx}`} className="min-w-[300px] max-w-sm bg-white/5 rounded-xl p-4 flex-shrink-0">
-            <h3 className="text-white font-semibold text-lg leading-tight mb-2">
-              <Link href={`/blog/${post.slug}`} className="hover:underline text-white">
-                {post.title}
-              </Link>
-            </h3>
+        {items
+          .filter((post: any) => post && post.slug)
+          .map((post: any, idx: number) => (
+            <article key={`${post?.id ?? 'post'}-${idx}`} className="min-w-[300px] max-w-sm bg-white/5 rounded-xl p-4 flex-shrink-0">
+              <h3 className="text-white font-semibold text-lg leading-tight mb-2">
+                <Link href={`/blog/${post.slug}`} className="hover:underline text-white">
+                  {post.title}
+                </Link>
+              </h3>
             <p className="text-sm text-white/80 mb-3 line-clamp-3">{post.excerpt || post.meta_description || ''}</p>
             <div className="flex items-center justify-between text-xs text-white/70">
               <time>{post.published_at ? new Date(post.published_at).toLocaleDateString() : ''}</time>

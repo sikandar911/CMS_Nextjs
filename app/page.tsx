@@ -5,9 +5,9 @@ import FollowJourney from '@/components/FollowJourney'
 import { postsApi } from '@/lib/api'
 import BlogSlider from '@/components/BlogSlider'
 
-export default function HomePage() {
+export default async function HomePage() {
   // Server-side fetch of posts to pass into the client component
-  const allPosts = postsApi.getPublished()
+  const allPosts = await postsApi.getPublished()
 
   return (
     <div className="min-h-screen bg-white">
@@ -25,11 +25,12 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/40" />
         </div>
 
-  <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-start lg:items-center relative z-10">
+  <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center relative z-10">
           <div className="w-full grid grid-cols-12 gap-6 items-center">
             {/* Left Hero (Main content) */}
+            <div className="col-span-12 block lg:hidden pt-10 mt-10" />
             <div className="col-span-12 lg:col-span-7 xl:col-span-7 pb-8 lg:pb-0">
-              <div className="max-w-2xl text-white">
+              <div className="max-w-2xl text-white ">
                 <div className="inline-block mb-4">
                   <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#EF623C] text-white text-sm font-medium">
                     Featured Article
@@ -50,7 +51,7 @@ export default function HomePage() {
               {/* blog slider  end */}
                 
                 {/* Mobile CTA - moved inside left hero so it stacks under content on small screens */}
-                <div className="block lg:hidden mt-6">
+                <div className="block lg:hidden mt-5 mr-5 relative z-20">
                   <div className="w-full bg-[#F8FAFC] rounded-xl shadow p-4">
                     <h4 className="text-md font-semibold text-gray-900 text-center">Get Your Free University Success Kit</h4>
                     <p className="text-sm text-gray-600 text-center">Download our complete application guide + scholarship database</p>
@@ -130,6 +131,8 @@ export default function HomePage() {
         </div>
       </section>
 
+  {/* Spacer to ensure ReadingNow doesn't overlap the mobile CTA on very small screens */}
+  <div className="block lg:hidden h-6" />
   <ReadingNow initialPosts={allPosts} />
 
   <FollowJourney />

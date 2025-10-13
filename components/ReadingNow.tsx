@@ -13,16 +13,69 @@ interface Post {
   featured_image?: string
 }
 
-export default function ReadingNow({ initialPosts }: { initialPosts: Post[] }) {
+export default function ReadingNow({ initialPosts }: { initialPosts?: any }) {
   const POSTS_PER_PAGE = 6
   const [page, setPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
 
   // Reset to first page if the incoming posts change
+  // Normalize initialPosts by finding the first array of post-like objects
+  const findPostsArray = (input: any, depth = 0, visited = new Set()): any[] => {
+    if (!input || depth > 6) return []
+    if (visited.has(input)) return []
+    if (Array.isArray(input)) {
+      // check if array looks like posts (has objects with slug or title or id)
+      if (input.length === 0) return []
+      const sample = input.find((x) => x && typeof x === 'object')
+      if (sample && (sample.slug || sample.title || sample.id)) return input
+      // maybe nested one level: [{ post: {...} }, ...]
+      const unwrapped = input.map((x) => (x && x.post ? x.post : x)).filter(Boolean)
+      if (unwrapped.length > 0 && (unwrapped[0].slug || unwrapped[0].title || unwrapped[0].id)) return unwrapped
+      // otherwise try to search inside array elements
+      for (const el of input) {
+        const found = findPostsArray(el, depth + 1, visited)
+        if (found.length) return found
+      }
+      return []
+    }
+
+    if (typeof input === 'object') {
+      visited.add(input)
+      // common keys
+      const keysToTry = ['data', 'posts', 'rows', 'results', 'items', 'docs', 'payload']
+      for (const k of keysToTry) {
+        if (Array.isArray(input[k])) {
+          const candidate = input[k]
+          const sample = candidate.find((x: any) => x && typeof x === 'object')
+          if (sample && (sample.slug || sample.title || sample.id)) return candidate
+          const unwrapped = candidate.map((x: any) => (x && x.post ? x.post : x)).filter(Boolean)
+          if (unwrapped.length > 0 && (unwrapped[0].slug || unwrapped[0].title || unwrapped[0].id)) return unwrapped
+        }
+      }
+
+      // search values recursively
+      for (const val of Object.values(input)) {
+        const found = findPostsArray(val, depth + 1, visited)
+        if (found.length) return found
+      }
+    }
+
+    return []
+  }
+
+  const postsArray: Post[] = findPostsArray(initialPosts)
+  const flattenedPosts = postsArray.map((p: any) => (p && p.post ? p.post : p))
+
+  // Warn in dev if normalization yields nothing (helps trace DB/API shape issues)
+  if (process.env.NODE_ENV !== 'production' && flattenedPosts.length === 0 && initialPosts) {
+    // eslint-disable-next-line no-console
+    console.warn('ReadingNow: normalized initialPosts to empty array — incoming shape:', initialPosts)
+  }
+
   useEffect(() => {
     setPage(1)
-  }, [initialPosts])
+  }, [postsArray])
 
   // reset page when filters change
   useEffect(() => {
@@ -31,7 +84,8 @@ export default function ReadingNow({ initialPosts }: { initialPosts: Post[] }) {
 
   // compute filtered posts based on search and category
   const normalizedSearch = searchTerm.trim().toLowerCase()
-  const filteredPosts = initialPosts.filter((p) => {
+  const filteredPosts = flattenedPosts.filter((p: Post) => {
+    if (!p || typeof p !== 'object') return false
     const matchesCategory = selectedCategory ? (p.category === selectedCategory) : true
     if (!normalizedSearch) return matchesCategory
     const inTitle = (p.title || '').toLowerCase().includes(normalizedSearch)
@@ -44,12 +98,12 @@ export default function ReadingNow({ initialPosts }: { initialPosts: Post[] }) {
   const pagedPosts = filteredPosts.slice(start, start + POSTS_PER_PAGE)
 
   // derive available categories from posts (unique)
-  const categories = Array.from(new Set(initialPosts.map(p => p.category).filter(Boolean)))
+  const categories = Array.from(new Set(flattenedPosts.map((p: any) => p?.category).filter(Boolean))).sort((a, b) => String(a).localeCompare(String(b)))
 
   return (
     
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-10 px-5 bg-gray-50">
+      <div className="max-w-7xl mx-auto sm:px-3 md:px-6 lg:px-8">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center gap-2">
             <svg className="w-5 h-5 text-[#EF623C]" viewBox="0 0 24 24" fill="none" stroke="currentColor">

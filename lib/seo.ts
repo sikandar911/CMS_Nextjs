@@ -1,4 +1,4 @@
-import { Post, Media } from './api'
+import { Post } from './api'
 
 // SEO and JSON-LD Schema helpers
 export interface SEOData {
@@ -70,7 +70,7 @@ export class SEOHelper {
   }
 
   // Generate JSON-LD structured data for blog post
-  static generateBlogPostSchema(post: Post, media?: Media, blocks?: any[]): any {
+  static generateBlogPostSchema(post: any, media?: any, blocks?: any[]): any {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://example.com'
     
     const schema: any = {
@@ -83,7 +83,7 @@ export class SEOHelper {
       dateModified: post.updated_at,
       author: {
         '@type': 'Person',
-        name: post.author.name
+        name: (post as any)?.author?.display_name || (post as any)?.author?.name || 'Unknown'
       },
       publisher: {
         '@type': 'Organization',
@@ -116,11 +116,12 @@ export class SEOHelper {
         .filter(block => block.type === 'paragraph' || block.type === 'title')
         .map(block => {
           if (block.type === 'title') {
-            return block.content.text
+            return (block.content as any)?.text || ''
           }
           if (block.type === 'paragraph') {
             // Strip HTML tags for plain text
-            return block.content.html.replace(/<[^>]*>/g, '')
+            const html = (block.content as any)?.html || (block.content as any)?.text || ''
+            return String(html).replace(/<[^>]*>/g, '')
           }
           return ''
         })

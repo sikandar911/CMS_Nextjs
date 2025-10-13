@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  display_name String
+  password     String
+  role         String   @default("editor")
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  // Relations
+  authored_posts      Post[]           @relation("PostAuthor")
+  created_blocks      PostBlock[]      @relation("BlockCreatedBy")
+  updated_blocks      PostBlock[]      @relation("BlockUpdatedBy")
+  post_revisions      PostRevision[]   @relation("RevisionAuthor")
+
+  @@map("users")
+}
+
+model Post {
+  id               Int       @id @default(autoincrement())
+  title            String
+  slug             String    @unique
+  excerpt          String?
+  meta_title       String?
+  meta_description String?
+  status           String    @default("draft") // draft, published, archived
+  tags             String[]  @default([])
+  category         String?
+  canonical_url    String?
+  featured_image   String?
+  featured_image_id Int?
+  language         String    @default("en")
+  author_id        Int
+  published_at     DateTime?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  active           Int       @default(1)
+
+  // Relations
+  author         User           @relation("PostAuthor", fields: [author_id], references: [id])
+  blocks         PostBlock[]    @relation("PostBlocks")
+  revisions      PostRevision[] @relation("PostRevisions")
+
+  // Indexes for performance
+  @@index([status])
+  @@index([category])
+  @@index([author_id])
+  @@index([published_at])
+  @@index([slug])
+  @@map("posts")
+}
+
+model PostBlock {
+  id           String    @id @default(uuid())
+  post_id      Int
+  index        Int       @default(0)
+  type         String    // texteditor, image, card, accordion, tabs, layout2, layout3, layout4, etc.
+  content      Json      // Store the complex content structure as JSON (maintaining existing format)
+  settings     Json      @default("{}")
+  order        Int?      @default(0)
+  created_by   Int
+  updated_by   Int
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  // Relations
+  post          Post @relation("PostBlocks", fields: [post_id], references: [id], onDelete: Cascade)
+  creator       User @relation("BlockCreatedBy", fields: [created_by], references: [id])
+  updater       User @relation("BlockUpdatedBy", fields: [updated_by], references: [id])
+
+  // Indexes for performance
+  @@index([post_id])
+  @@index([type])
+  @@index([post_id, order])
+  @@map("post_blocks")
+}
+
+model PostRevision {
+  id              Int      @id @default(autoincrement())
+  post_id         Int
+  revision_number Int
+  author_id       Int
+  edited_at       DateTime @default(now()) // Track when this revision was made
+  created_at      DateTime @default(now())
+
+  // Relations
+  post   Post @relation("PostRevisions", fields: [post_id], references: [id], onDelete: Cascade)
+  author User @relation("RevisionAuthor", fields: [author_id], references: [id])
+
+  // Unique constraint to prevent duplicate revision numbers per post
+  @@unique([post_id, revision_number])
+  @@index([post_id])
+  @@map("post_revisions")
+}

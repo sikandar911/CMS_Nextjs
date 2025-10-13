@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
     } else if (status === 'published') {
       posts = await postsApi.getPublished()
     } else if (status === 'archived') {
-      posts = await postsApi.getAll().filter(p => p.status === 'archived' && p.active === 1)
+      const allPosts = await postsApi.getAll()
+      posts = allPosts.filter(p => p.status === 'archived' && p.active === 1)
     } else {
       posts = await postsApi.getAll()
     }

@@ -25,3 +25,9 @@ yarn-error.log*
 .next
 data/post_blocks.json
 data/posts.json
+/generated/prisma
+/scripts
+DATABASE_MIGRATION.md
+TEXTEDITOR_IMPROVEMENTS.md
+TEXTEDITOR_MIGRATION_SUMMARY.md
+.env

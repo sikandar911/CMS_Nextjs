@@ -34,9 +34,8 @@ export class AuthService {
   // Login user
   static async login(email: string, password: string): Promise<LoginResult> {
     try {
-      // Get user from database
-      const users = await usersApi.getAll()
-      const user = users.find(u => u.email === email)
+      // Get user from database directly (more efficient than getAll)
+      const user = await usersApi.getByEmail(email)
       
       if (!user) {
         return { success: false, error: 'Invalid email or password' }

@@ -1,368 +1,427 @@
-import fs from 'fs'
-import path from 'path'
+import { prisma } from './prisma'
+import type { Post, User, PostBlock, PostRevision } from '@prisma/client'
 
-// Data file paths
-const DATA_DIR = path.join(process.cwd(), 'data')
-const POSTS_FILE = path.join(DATA_DIR, 'posts.json')
-const USERS_FILE = path.join(DATA_DIR, 'users.json')
-const BLOCKS_FILE = path.join(DATA_DIR, 'post_blocks.json')
-const MEDIA_FILE = path.join(DATA_DIR, 'media.json')
-const REVISIONS_FILE = path.join(DATA_DIR, 'post_revisions.json')
-
-// Type definitions
-export interface User {
-  id: number
-  email: string
-  display_name: string
-  password: string
-  role: 'admin' | 'editor'
-  created_at: string
-}
-
-export interface Post {
-  id: number
-  slug: string
-  title: string
-  excerpt: string
-  tags: string[]
-  category: string
-  status: 'draft' | 'published' | 'archived'
+// Extended types for API responses (including relations)
+export interface PostWithAuthor extends Post {
   author: {
     id: number
-    name: string
-  }
-  canonical_url: string
-  published_at: string | null
-  meta_title: string
-  meta_description: string
-  featured_image?: string
-  featured_image_id: number | null
-  language: string
-  created_at: string
-  updated_at: string
-  active: number
-}
-
-export interface PostBlock {
-  id: string
-  post_id: number
-  index: number
-  type: 'title' | 'paragraph' | 'accordion' | 'tabs' | 'card' | 'button' | 'image' | 'html' | 'embed' | 'gallery'
-  content: any
-  settings: any
-  created_by: number
-  updated_by: number
-  created_at: string
-  updated_at: string
-}
-
-export interface Media {
-  id: number
-  filename: string
-  alt_text: string
-  url: string
-  width: number
-  height: number
-  size: number
-  uploaded_by: number
-  created_at: string
-}
-
-export interface PostRevision {
-  id: number
-  post_id: number
-  revision_number: number
-  author_id: number
-  data_snapshot: any
-  created_at: string
-}
-
-// Helper functions to read JSON files
-function readJsonFile<T>(filePath: string): T {
-  try {
-    const fileContents = fs.readFileSync(filePath, 'utf8')
-    return JSON.parse(fileContents)
-  } catch (error) {
-    console.error(`Error reading file ${filePath}:`, error)
-    throw new Error(`Failed to read ${filePath}`)
+    display_name: string
   }
 }
 
-function writeJsonFile<T>(filePath: string, data: T): void {
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
-  } catch (error) {
-    console.error(`Error writing file ${filePath}:`, error)
-    throw new Error(`Failed to write ${filePath}`)
-  }
+export interface PostWithAuthorAndBlocks extends PostWithAuthor {
+  blocks: PostBlock[]
 }
+
+// Re-export Prisma types
+export type { User, Post, PostBlock, PostRevision }
 
 // Posts API
 export const postsApi = {
-  getAll: (): Post[] => {
-    const data = readJsonFile<{ posts: Post[] }>(POSTS_FILE)
-    return data.posts
+  getAll: async (): Promise<PostWithAuthor[]> => {
+    const posts = await prisma.post.findMany({
+      include: {
+        author: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    })
+    return posts
   },
 
-  getBySlug: (slug: string): Post | null => {
-    const posts = postsApi.getAll()
-    const matchingPosts = posts.filter(post => post.slug === slug)
+  getBySlug: async (slug: string): Promise<PostWithAuthor | null> => {
+    // Use findFirst with proper ordering to get the most recent post
+    const post = await prisma.post.findFirst({
+      where: { 
+        slug,
+        active: 1 // Only active posts
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
+      },
+      orderBy: [
+        { status: 'desc' }, // Published posts come first (alphabetically 'published' > 'draft')
+        { updated_at: 'desc' } // Most recently updated first
+      ]
+    })
     
-    if (matchingPosts.length === 0) {
-      return null
-    }
-    
-    // Prioritize published posts over drafts
-    const publishedPost = matchingPosts.find(post => post.status === 'published')
-    if (publishedPost) {
-      return publishedPost
-    }
-    
-    // If no published post, return the first match
-    return matchingPosts[0]
+    return post
   },
 
-  getById: (id: number): Post | null => {
-    const posts = postsApi.getAll()
-    return posts.find(post => post.id === id) || null
+  getById: async (id: number): Promise<PostWithAuthor | null> => {
+    const post = await prisma.post.findUnique({
+      where: { id },
+      include: {
+        author: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
+      },
+    })
+    return post
   },
 
-  getPublished: (): Post[] => {
-    const posts = postsApi.getAll()
-    return posts.filter(post => post.status === 'published' && (post.active === undefined || post.active === 1))
+  getPublished: async (): Promise<PostWithAuthor[]> => {
+    const posts = await prisma.post.findMany({
+      where: {
+        status: 'published',
+        active: 1,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
+      },
+      orderBy: {
+        published_at: 'desc',
+      },
+    })
+    return posts
   },
 
-  getDrafts: (): Post[] => {
-    const posts = postsApi.getAll()
-    return posts.filter(post => post.status === 'draft' && (post.active === undefined || post.active === 1))
+  getDrafts: async (): Promise<PostWithAuthor[]> => {
+    const posts = await prisma.post.findMany({
+      where: {
+        status: 'draft',
+        active: 1,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
+      },
+      orderBy: {
+        updated_at: 'desc',
+      },
+    })
+    return posts
   },
 
-  create: (post: Omit<Post, 'id' | 'created_at' | 'updated_at'>): Post => {
-    const data = readJsonFile<{ posts: Post[] }>(POSTS_FILE)
-    const newId = Math.max(...data.posts.map(p => p.id), 0) + 1
-    const now = new Date().toISOString()
-    
-    const newPost: Post = {
-      id: newId,
-      created_at: now,
-      updated_at: now,
-      ...post
-    }
-    
-    data.posts.push(newPost)
-    writeJsonFile(POSTS_FILE, data)
+  create: async (post: Omit<Post, 'id' | 'created_at' | 'updated_at'>): Promise<PostWithAuthor> => {
+    const newPost = await prisma.post.create({
+      data: post,
+      include: {
+        author: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
+      },
+    })
     return newPost
   },
 
-  update: (id: number, updates: Partial<Post>): Post | null => {
-    const data = readJsonFile<{ posts: Post[] }>(POSTS_FILE)
-    const index = data.posts.findIndex(post => post.id === id)
-    
-    if (index === -1) return null
-    
-    data.posts[index] = {
-      ...data.posts[index],
-      ...updates,
-      updated_at: new Date().toISOString()
+  update: async (id: number, updates: Partial<Post>, authorId?: number): Promise<PostWithAuthor | null> => {
+    try {
+      // Get current revision number for this post
+      const latestRevision = await prisma.postRevision.findFirst({
+        where: { post_id: id },
+        orderBy: { revision_number: 'desc' },
+        select: { revision_number: true },
+      })
+      
+      const nextRevisionNumber = (latestRevision?.revision_number || 0) + 1
+      
+      // Update the post and create revision in a transaction
+      const result = await prisma.$transaction(async (tx) => {
+        // Update the post
+        const updatedPost = await tx.post.update({
+          where: { id },
+          data: updates,
+          include: {
+            author: {
+              select: {
+                id: true,
+                display_name: true,
+              },
+            },
+          },
+        })
+
+        // Create revision record if authorId is provided
+        if (authorId) {
+          await tx.postRevision.create({
+            data: {
+              post_id: id,
+              revision_number: nextRevisionNumber,
+              author_id: authorId,
+              edited_at: new Date(),
+            } as any,
+          })
+        }
+
+        return updatedPost
+      })
+
+      return result
+    } catch (error) {
+      console.error('Error updating post:', error)
+      return null
     }
-    
-    writeJsonFile(POSTS_FILE, data)
-    return data.posts[index]
   },
 
-  delete: (id: number): boolean => {
-    const data = readJsonFile<{ posts: Post[] }>(POSTS_FILE)
-    const index = data.posts.findIndex(post => post.id === id)
-    
-    if (index === -1) return false
-    
-    data.posts.splice(index, 1)
-    writeJsonFile(POSTS_FILE, data)
-    return true
+  delete: async (id: number): Promise<boolean> => {
+    try {
+      await prisma.post.delete({
+        where: { id },
+      })
+      return true
+    } catch (error) {
+      return false
+    }
   }
 }
 
 // Blocks API
 export const blocksApi = {
-  getByPostId: (postId: number): PostBlock[] => {
-    const data = readJsonFile<{ post_blocks: PostBlock[] }>(BLOCKS_FILE)
-    return data.post_blocks
-      .filter(block => block.post_id === postId)
-      .sort((a, b) => a.index - b.index)
+  getByPostId: async (postId: number): Promise<PostBlock[]> => {
+    const blocks = await prisma.postBlock.findMany({
+      where: { post_id: postId },
+      orderBy: [
+        { order: 'asc' },
+        { index: 'asc' },
+      ],
+    })
+    return blocks
   },
 
   // Return all blocks across posts
-  getAll: (): PostBlock[] => {
-    const data = readJsonFile<{ post_blocks: PostBlock[] }>(BLOCKS_FILE)
-    return data.post_blocks
+  getAll: async (): Promise<PostBlock[]> => {
+    const blocks = await prisma.postBlock.findMany({
+      orderBy: [
+        { post_id: 'asc' },
+        { order: 'asc' },
+        { index: 'asc' },
+      ],
+    })
+    return blocks
   },
 
-  create: (block: Omit<PostBlock, 'created_at' | 'updated_at'>): PostBlock => {
-    const data = readJsonFile<{ post_blocks: PostBlock[] }>(BLOCKS_FILE)
-    const now = new Date().toISOString()
-    
-    const newBlock: PostBlock = {
-      ...block,
-      created_at: now,
-      updated_at: now
-    }
-    
-    data.post_blocks.push(newBlock)
-    writeJsonFile(BLOCKS_FILE, data)
+  create: async (block: Omit<PostBlock, 'created_at' | 'updated_at'>): Promise<PostBlock> => {
+    const newBlock = await prisma.postBlock.create({
+      // cast to any to avoid strict Prisma Json typing issues when content can be null
+      data: block as any,
+    })
     return newBlock
   },
 
-  update: (id: string, updates: Partial<PostBlock>): PostBlock | null => {
-    const data = readJsonFile<{ post_blocks: PostBlock[] }>(BLOCKS_FILE)
-    const index = data.post_blocks.findIndex(block => block.id === id)
-    
-    if (index === -1) return null
-    
-    data.post_blocks[index] = {
-      ...data.post_blocks[index],
-      ...updates,
-      updated_at: new Date().toISOString()
+  update: async (id: string, updates: Partial<PostBlock>): Promise<PostBlock | null> => {
+    try {
+      const updatedBlock = await prisma.postBlock.update({
+        where: { id },
+        // cast updates to any to avoid strict typing mismatch when partial fields are provided
+        data: updates as any,
+      })
+      return updatedBlock as any
+    } catch (error) {
+      return null
     }
-    
-    writeJsonFile(BLOCKS_FILE, data)
-    return data.post_blocks[index]
   },
 
-  delete: (id: string): boolean => {
-    const data = readJsonFile<{ post_blocks: PostBlock[] }>(BLOCKS_FILE)
-    const index = data.post_blocks.findIndex(block => block.id === id)
-    
-    if (index === -1) return false
-    
-    data.post_blocks.splice(index, 1)
-    writeJsonFile(BLOCKS_FILE, data)
-    return true
+  delete: async (id: string): Promise<boolean> => {
+    try {
+      await prisma.postBlock.delete({
+        where: { id },
+      })
+      return true
+    } catch (error) {
+      return false
+    }
   },
 
-  reorder: (postId: number, blockIds: string[]): void => {
-    const data = readJsonFile<{ post_blocks: PostBlock[] }>(BLOCKS_FILE)
-    
-    blockIds.forEach((id, newIndex) => {
-      const blockIndex = data.post_blocks.findIndex(block => block.id === id && block.post_id === postId)
-      if (blockIndex !== -1) {
-        data.post_blocks[blockIndex].index = newIndex
-        data.post_blocks[blockIndex].updated_at = new Date().toISOString()
-      }
+  reorder: async (postId: number, blockIds: string[]): Promise<void> => {
+    // Use transaction to ensure all updates happen atomically
+    await prisma.$transaction(async (tx) => {
+      const updates = blockIds.map((id, newIndex) => 
+        tx.postBlock.updateMany({
+          where: { 
+            id,
+            post_id: postId 
+          },
+          data: { 
+            index: newIndex,
+            order: newIndex,
+          }
+        })
+      )
+      await Promise.all(updates)
     })
-    
-    writeJsonFile(BLOCKS_FILE, data)
   },
 
-  updateMany: (blocks: Partial<PostBlock>[]): PostBlock[] => {
-    const data = readJsonFile<{ post_blocks: PostBlock[] }>(BLOCKS_FILE)
+  updateMany: async (blocks: Partial<PostBlock>[]): Promise<PostBlock[]> => {
     const updatedBlocks: PostBlock[] = []
-    const now = new Date().toISOString()
     
-    blocks.forEach(blockUpdate => {
-      if (blockUpdate.id) {
-        // Try to update existing block
-        const index = data.post_blocks.findIndex(block => block.id === blockUpdate.id)
-        if (index !== -1) {
-          data.post_blocks[index] = {
-            ...data.post_blocks[index],
-            ...blockUpdate,
-            updated_at: now
+    await prisma.$transaction(async (tx) => {
+      for (const blockUpdate of blocks) {
+        if (blockUpdate.id) {
+          // Try to update existing block
+            try {
+              const updatedBlock = await tx.postBlock.update({
+                where: { id: blockUpdate.id },
+                // cast to any to avoid strict Prisma Json typing issues
+                data: blockUpdate as any,
+              })
+              updatedBlocks.push(updatedBlock)
+          } catch (error) {
+            // Block doesn't exist, create it
+            const newBlock = await tx.postBlock.create({
+              data: {
+                id: blockUpdate.id,
+                post_id: blockUpdate.post_id || 0,
+                type: blockUpdate.type || 'paragraph',
+                // cast content/settings to any to avoid Json/null typing issues
+                content: blockUpdate.content as any,
+                settings: blockUpdate.settings as any || {},
+                index: blockUpdate.index || 0,
+                order: blockUpdate.order || 0,
+                created_by: blockUpdate.created_by || 1,
+                updated_by: blockUpdate.updated_by || 1,
+              } as any,
+            })
+            updatedBlocks.push(newBlock)
           }
-          updatedBlocks.push(data.post_blocks[index])
         } else {
-          // Block doesn't exist, create it
-          const newBlock: PostBlock = {
-            id: blockUpdate.id,
-            post_id: blockUpdate.post_id || 0,
-            type: blockUpdate.type || 'paragraph',
-            content: blockUpdate.content || {},
-            settings: blockUpdate.settings || {},
-            index: blockUpdate.index || 0,
-            created_by: blockUpdate.created_by || 1,
-            updated_by: blockUpdate.updated_by || 1,
-            created_at: now,
-            updated_at: now
-          }
-          data.post_blocks.push(newBlock)
+          // Create new block without ID - Prisma will generate UUID
+          const newBlock = await tx.postBlock.create({
+            data: {
+              post_id: blockUpdate.post_id || 0,
+              type: blockUpdate.type || 'paragraph',
+              content: blockUpdate.content as any,
+              settings: blockUpdate.settings as any || {},
+              index: blockUpdate.index || 0,
+              order: blockUpdate.order || 0,
+              created_by: blockUpdate.created_by || 1,
+              updated_by: blockUpdate.updated_by || 1,
+            } as any,
+          })
           updatedBlocks.push(newBlock)
         }
-      } else {
-        // Create new block without ID
-        const maxId = Math.max(...data.post_blocks.map(block => parseInt(block.id)), 0)
-        const newBlock: PostBlock = {
-          id: (maxId + 1).toString(),
-          post_id: blockUpdate.post_id || 0,
-          type: blockUpdate.type || 'paragraph',
-          content: blockUpdate.content || {},
-          settings: blockUpdate.settings || {},
-          index: blockUpdate.index || 0,
-          created_by: blockUpdate.created_by || 1,
-          updated_by: blockUpdate.updated_by || 1,
-          created_at: now,
-          updated_at: now
-        }
-        data.post_blocks.push(newBlock)
-        updatedBlocks.push(newBlock)
       }
     })
     
-    writeJsonFile(BLOCKS_FILE, data)
     return updatedBlocks
   }
 }
 
 // Users API
 export const usersApi = {
-  getAll: (): User[] => {
-    const data = readJsonFile<{ users: User[] }>(USERS_FILE)
-    return data.users
+  getAll: async (): Promise<User[]> => {
+    const users = await prisma.user.findMany({
+      orderBy: {
+        created_at: 'desc',
+      },
+    })
+    return users
   },
 
-  getByEmail: (email: string): User | null => {
-    const users = usersApi.getAll()
-    return users.find(user => user.email === email) || null
+  getByEmail: async (email: string): Promise<User | null> => {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    })
+    return user
   },
 
-  getById: (id: number): User | null => {
-    const users = usersApi.getAll()
-    return users.find(user => user.id === id) || null
-  }
-}
-
-// Media API
-export const mediaApi = {
-  getAll: (): Media[] => {
-    const data = readJsonFile<{ media: Media[] }>(MEDIA_FILE)
-    return data.media
+  getById: async (id: number): Promise<User | null> => {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    })
+    return user
   },
 
-  getById: (id: number): Media | null => {
-    const media = mediaApi.getAll()
-    return media.find(item => item.id === id) || null
-  }
-}
-
-// Revisions API
-export const revisionsApi = {
-  getByPostId: (postId: number): PostRevision[] => {
-    const data = readJsonFile<{ post_revisions: PostRevision[] }>(REVISIONS_FILE)
-    return data.post_revisions
-      .filter(revision => revision.post_id === postId)
-      .sort((a, b) => b.revision_number - a.revision_number)
+  create: async (user: Omit<User, 'id' | 'created_at' | 'updated_at'>): Promise<User> => {
+    const newUser = await prisma.user.create({
+      data: user,
+    })
+    return newUser
   },
 
-  create: (revision: Omit<PostRevision, 'id' | 'created_at'>): PostRevision => {
-    const data = readJsonFile<{ post_revisions: PostRevision[] }>(REVISIONS_FILE)
-    const newId = Math.max(...data.post_revisions.map(r => r.id), 0) + 1
-    
-    const newRevision: PostRevision = {
-      id: newId,
-      created_at: new Date().toISOString(),
-      ...revision
+  update: async (id: number, updates: Partial<User>): Promise<User | null> => {
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: updates,
+      })
+      return updatedUser
+    } catch (error) {
+      return null
     }
+  }
+}
+
+// Revisions API  
+export const revisionsApi = {
+  getByPostId: async (postId: number): Promise<PostRevision[]> => {
+    const revisions = await prisma.postRevision.findMany({
+      where: { post_id: postId },
+      include: {
+        author: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
+      },
+      orderBy: {
+        revision_number: 'desc',
+      },
+    })
+    return revisions
+  },
+
+  create: async (postId: number, authorId: number): Promise<PostRevision> => {
+    // Get next revision number
+    const latestRevision = await prisma.postRevision.findFirst({
+      where: { post_id: postId },
+      orderBy: { revision_number: 'desc' },
+      select: { revision_number: true },
+    })
     
-    data.post_revisions.push(newRevision)
-    writeJsonFile(REVISIONS_FILE, data)
+    const nextRevisionNumber = (latestRevision?.revision_number || 0) + 1
+    
+    const newRevision = await prisma.postRevision.create({
+      data: {
+        post_id: postId,
+        revision_number: nextRevisionNumber,
+        author_id: authorId,
+        edited_at: new Date(),
+      } as any,
+    })
     return newRevision
+  },
+
+  getLatestRevisionNumber: async (postId: number): Promise<number> => {
+    const latest = await prisma.postRevision.findFirst({
+      where: { post_id: postId },
+      orderBy: { revision_number: 'desc' },
+      select: { revision_number: true },
+    })
+    return latest?.revision_number || 0
+  },
+
+  getRevisionCount: async (postId: number): Promise<number> => {
+    const count = await prisma.postRevision.count({
+      where: { post_id: postId },
+    })
+    return count
   }
 }

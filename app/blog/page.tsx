@@ -5,8 +5,9 @@ import Link from 'next/link'
 import Navigation from '@/components/Navigation'
 
 // Helper function to format dates
-function formatDate(dateString: string): string {
-  const date = new Date(dateString)
+function formatDate(dateInput?: string | Date): string {
+  if (!dateInput) return ''
+  const date = new Date(dateInput as any)
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -86,7 +87,7 @@ export default async function BlogPage() {
                   <div className="p-6">
                     {/* Post Date */}
                     <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <time dateTime={post.published_at || post.created_at}>
+                      <time dateTime={(post.published_at || post.created_at) ? (post.published_at || post.created_at).toString() : undefined}>
                         {formatDate(post.published_at || post.created_at)}
                       </time>
                     </div>
