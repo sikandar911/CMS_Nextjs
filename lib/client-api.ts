@@ -2,14 +2,14 @@
 const API_BASE = '/api'
 
 class ClientApiError extends Error {
-  constructor(message: string, public status: number) {
+  constructor(message: string, public status: number, public body?: any) {
     super(message)
     this.name = 'ClientApiError'
   }
 }
 
 async function apiRequest(endpoint: string, options: RequestInit = {}) {
-  const token = localStorage.getItem('admin_token')
+  const token = localStorage.getItem('blog_auth_token')
   // Safely merge headers (options.headers may be undefined)
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
   
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Network error' }))
-    throw new ClientApiError(error.error || 'Request failed', response.status)
+    throw new ClientApiError(error.error || 'Request failed', response.status, error)
   }
 
   return response.json()
@@ -109,19 +109,23 @@ export const clientApi = {
     },
 
     logout: () => {
+      localStorage.removeItem('blog_auth_token')
+      // Also clear any old token keys
       localStorage.removeItem('admin_token')
     },
 
     isAuthenticated: () => {
-      return !!localStorage.getItem('admin_token')
+      return !!localStorage.getItem('blog_auth_token')
     },
 
     getToken: () => {
-      return localStorage.getItem('admin_token')
+      return localStorage.getItem('blog_auth_token')
     },
 
     setToken: (token: string) => {
-      localStorage.setItem('admin_token', token)
+      localStorage.setItem('blog_auth_token', token)
+      // Clear any old token keys
+      localStorage.removeItem('admin_token')
     },
   },
 }

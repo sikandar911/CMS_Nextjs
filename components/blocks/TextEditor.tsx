@@ -5,6 +5,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
+import { sanitizeHtml } from '../../lib/sanitize'
 // Text alignment extension
 // @ts-ignore
 import TextAlign from '@tiptap/extension-text-align'
@@ -612,7 +613,7 @@ export default function TextEditor({
   return (
     <div 
       className={`prose prose-slate max-w-none prose-headings:text-[#045D5E] prose-a:text-[#FC7300] prose-strong:text-[#045D5E] prose-blockquote:border-l-[#FC7300] prose-code:text-[#045D5E] prose-code:bg-[#F1F4F3] ${getAlignmentClass(alignment)} ${widthClass} ${marginClass} ${paddingClass}`}
-      dangerouslySetInnerHTML={{ __html: content.html || content.json || '<p>No content</p>' }}
+      dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.html || content.json || '<p>No content</p>') }}
     />
   )
 }

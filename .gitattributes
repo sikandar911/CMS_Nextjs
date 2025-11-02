@@ -1,0 +1,29 @@
+# .gitattributes - normalize line endings across platforms
+# Treat all files as text by default when Git can detect them
+* text=auto
+
+# Explicitly normalize common text file types
+*.js text
+*.jsx text
+*.ts text
+*.tsx text
+*.json text
+*.css text
+*.scss text
+*.html text
+*.md text
+*.xml text
+*.yml text
+*.yaml text
+
+# Ensure shell scripts keep LF (useful on CI/linux)
+*.sh text eol=lf
+
+# Binary files (don't attempt to normalize)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary
+*.gz binary
+*.pdf binary

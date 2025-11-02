@@ -104,3 +104,14 @@ model PostRevision {
   @@index([post_id])
   @@map("post_revisions")
 }
+
+model RoadmapSubmission {
+  id            Int      @id @default(autoincrement())
+  target_degree String?
+  academic_level String?
+  field_of_study String?
+  email         String?
+  created_at    DateTime @default(now())
+
+  @@map("roadmap_submissions")
+}

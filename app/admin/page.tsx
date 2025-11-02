@@ -44,35 +44,77 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
-    // Check if user is already authenticated
-    if (clientApi.auth.isAuthenticated()) {
-      setIsAuthenticated(true)
-      loadPosts()
-    } else {
+    console.log('Admin page: Starting authentication check...')
+    
+    // Simple timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.log('Admin page: Timeout reached, stopping loading')
       setLoading(false)
+    }, 5000)
+
+    try {
+      // Check for token
+      const token = localStorage.getItem('blog_auth_token')
+      console.log('Admin page: Token exists:', !!token)
+      
+      if (token) {
+        console.log('Admin page: User has token, setting authenticated and loading posts')
+        setIsAuthenticated(true)
+        loadPosts().finally(() => clearTimeout(timeoutId))
+      } else {
+        console.log('Admin page: No token found, showing login form')
+        setLoading(false)
+        clearTimeout(timeoutId)
+      }
+    } catch (error) {
+      console.error('Admin page: Error in useEffect:', error)
+      setLoading(false)
+      clearTimeout(timeoutId)
     }
   }, [])
 
   const loadPosts = async () => {
+    console.log('Admin page: loadPosts started')
     try {
       setLoading(true)
-      const response = await clientApi.posts.getAll()
+      
+      // Add timeout to API call
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('API timeout')), 10000)
+      )
+      
+      const apiPromise = clientApi.posts.getAll()
+      const response = await Promise.race([apiPromise, timeoutPromise]) as any
+      
+      console.log('Admin page: API response received:', response)
+      
+      if (!response || !response.posts) {
+        throw new Error('Invalid response format')
+      }
+      
       const allPosts = response.posts
-      // Filter and convert to expected format
       const validPosts = allPosts
-        .filter((post: any) => post.status === 'draft' || post.status === 'published')
+        .filter((post: any) => post && (post.status === 'draft' || post.status === 'published'))
         .map((post: any) => ({
           ...post,
           status: post.status as 'draft' | 'published'
         }))
+      
+      console.log('Admin page: Setting posts:', validPosts.length, 'posts found')
       setPosts(validPosts as Post[])
     } catch (error) {
-      console.error('Error loading posts:', error)
+      console.error('Admin page: Error loading posts:', error)
+      
       if (error instanceof ClientApiError && error.status === 401) {
+        console.log('Admin page: 401 error, clearing auth')
         clientApi.auth.logout()
         setIsAuthenticated(false)
+      } else {
+        // Show error but don't log out for other errors
+        showNotification('Failed to load posts. Please refresh the page.', 'error')
       }
     } finally {
+      console.log('Admin page: loadPosts completed, setting loading to false')
       setLoading(false)
     }
   }
@@ -92,7 +134,26 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       if (error instanceof ClientApiError) {
-        setLoginError(error.message)
+        // If rate limited/banned
+        if (error.status === 429) {
+          const body = (error as any).body || {}
+          if (body.banTTL) {
+            const mins = Math.ceil(body.banTTL / 60)
+            setLoginError(body.error || `Too many attempts. Blocked for ${mins} minutes.`)
+          } else {
+            setLoginError(body.error || `Too many attempts. Try again in ${body.retryAfter || 'a moment'}.`)
+          }
+        } else if (error.status === 401) {
+          // Invalid credentials - show remaining attempts if provided
+          const body = (error as any).body || {}
+          if (body.remaining !== undefined) {
+            setLoginError(`${body.error || 'Invalid credentials'}. Attempts remaining: ${body.remaining}`)
+          } else {
+            setLoginError(error.message)
+          }
+        } else {
+          setLoginError(error.message)
+        }
       } else {
         setLoginError('Login failed. Please try again.')
       }

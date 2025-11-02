@@ -186,107 +186,102 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
           )}
 
           {/* Hero Section with Featured Image Background */}
-          <header
-            className="relative w-full overflow-hidden bg-cover bg-center bg-no-repeat h-auto sm:h-[70vh] min-h-0 sm:min-h-[300px] pb-8"
+            <header
+            className="blog-header"
             style={{
               backgroundImage: `url(${post.featured_image || 'https://res.cloudinary.com/drgot7znf/image/upload/v1759752597/blog_image_a2jalg.jpg'})`
             }}
-          >
+            >
+       
+
             {/* Dark overlay for better text contrast */}
-            <div className="absolute inset-0 bg-black/60"></div>
+            <div className="blog-header__overlay"></div>
 
             {/* Content positioned in bottom-left */}
-            <div className="relative lg:right-0 p-6 md:p-12 lg:p-16 pb-12 md:pb-16 z-10">
-              <div className="max-w-7xl mx-auto pt-12 sm:pt-[10vh]">
-                <div className="max-w-2xl ">
-                  {/* Category Tag */}
-                  {/* Visible Breadcrumbs (also shown at top) - placed above the title */}
-                  <nav aria-label="Breadcrumb" className="mb-4">
-                    <ol className="flex items-center space-x-2 text-sm text-gray-200">
-                      <li>
-                        <a href="/" className="hover:text-white transition-colors">
-                          Home
-                        </a>
-                      </li>
-                      <li>
-                        <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </li>
-                      <li>
-                        <a href="/blog" className="hover:text-white transition-colors">
-                          Blog
-                        </a>
-                      </li>
-                      <li>
-                        <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </li>
-                      <li className="text-gray-200 font-medium truncate ">
-                        {post.title}
-                      </li>
-                    </ol>
-                  </nav>
+            <div className="blog-header__content">
+              <div className="blog-header__container">
+              <div className="blog-header__inner">
+                {/* Category Tag */}
+                {/* Visible Breadcrumbs (also shown at top) - placed above the title */}
+                <nav aria-label="Breadcrumb" className="breadcrumb">
+                <ol>
+                  <li>
+                  <a href="/" aria-label="Home link">Home</a>
+                  </li>
+                  <li>
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                  </li>
+                  <li>
+                  <a href="/blog">Blog</a>
+                  </li>
+                  <li>
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                  </li>
+                  <li style={{ fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {post.title}
+                  </li>
+                </ol>
+                </nav>
 
-                  {/* Category Tag */}
-                  <div className="mb-4">
-                    <span
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-white z-10"
-                      style={{ backgroundColor: '#EF623C' }}
-                    >
-                      {post.category}
-                    </span>
-                  </div>
-
-                  {/* Post Title */}
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
-                    {post.title}
-                  </h1>
-
-                  {/* Post Meta Information */}
-                  <div className="flex flex-wrap items-center text-gray-200 text-sm space-x-6 mb-4">
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      <span>By {author?.name || 'Unknown Author'}</span>
-                    </div>
-
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <time dateTime={(post.published_at || post.created_at) ? (post.published_at || post.created_at).toString() : undefined}>
-                        {formatDate(post.published_at || post.created_at)}
-                      </time>
-                    </div>
-
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span>{SEOHelper.calculateReadingTime(contentText)} min read</span>
-                    </div>
-                  </div>
-
-                  {/* Post Excerpt */}
-                  {post.excerpt && (
-                    <p className="text-lg md:text-xl text-gray-100 leading-relaxed line-clamp-3">
-                      {post.excerpt}
-                    </p>
-                  )}
+                {/* Category Tag */}
+                <div style={{ marginBottom: 12, marginTop: 8 }}>
+                <span className="category-tag">
+                  {post.category}
+                </span>
                 </div>
+
+                {/* Post Title */}
+                <h1 className="post-title">
+                {post.title}
+                </h1>
+
+                {/* Post Meta Information */}
+                <div className="post-meta">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span>By {author?.name || 'Unknown Author'}</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <time dateTime={(post.published_at || post.created_at) ? (post.published_at || post.created_at).toString() : undefined}>
+                  {formatDate(post.published_at || post.created_at)}
+                  </time>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{SEOHelper.calculateReadingTime(contentText)} min read</span>
+                </div>
+                </div>
+
+                {/* Post Excerpt */}
+                {post.excerpt && (
+                <p className="post-excerpt">
+                  {post.excerpt}
+                </p>
+                )}
+              </div>
               </div>
             </div>
 
             {/* top breadcrumb removed - using breadcrumb above title inside overlay */}
-          </header>
+            </header>
              {/* hero section end */}
 
 
           {/* Article Content - Two Column Layout */}
-          <div className="py-16">
+          <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Main Content - 70% width */}
@@ -397,10 +392,137 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
           </footer>
           </article>
         </div>
+             <style>{`
+              .blog-header {
+              position: relative;
+              width: 100%;
+              overflow: hidden;
+              background-size: cover;
+              background-position: center;
+              background-repeat: no-repeat;
+              height: 60vh;
+              min-height: 320px;
+              padding-bottom: 2rem;
+              }
+
+              @media (min-width: 640px) {
+              .blog-header { height: 80vh; min-height: 420px; }
+              }
+              @media (min-width: 768px) {
+              .blog-header { height: 400px; }
+              }
+
+              .blog-header__overlay {
+              position: absolute;
+              inset: 0;
+              background: rgba(0,0,0,0.6);
+              }
+
+              .blog-header__content {
+              position: relative;
+              z-index: 10;
+              padding: 24px;
+              }
+
+              @media (min-width: 768px) {
+              .blog-header__content {
+                padding: 32px 48px;
+              }
+              }
+
+              .blog-header__container {
+              max-width: 1120px;
+              margin: 0 auto;
+              padding-top: 32px;
+              }
+
+              .blog-header__inner {
+              max-width: 640px;
+              color: #fff;
+              }
+
+              .breadcrumb {
+              margin-bottom: 1rem;
+              padding-top: 2rem; /* mobile spacing to separate from navbar */
+              @media (min-width: 640px) { padding-top: 0; }
+              }
+
+              .breadcrumb ol {
+              display: flex;
+              gap: 8px;
+              align-items: center;
+              font-size: 14px;
+              color: #e5e7eb; /* gray-200 */
+              }
+
+              .breadcrumb a {
+              color: inherit;
+              text-decoration: none;
+              }
+
+              .breadcrumb svg {
+              width: 16px;
+              height: 16px;
+              color: #9ca3af; /* gray-400 */
+              }
+
+              .category-tag {
+              display: inline-block;
+              padding: 6px 12px;
+              border-radius: 9999px;
+              font-size: 14px;
+              font-weight: 500;
+              color: #fff;
+              background: #EF623C;
+              margin-bottom: 12px;
+              }
+
+              .post-title {
+              margin: 0 0 12px 0;
+              font-weight: 700;
+              line-height: 1.05;
+              font-size: 32px;
+              }
+
+              @media (min-width: 768px) {
+              .post-title { font-size: 40px; }
+              }
+              @media (min-width: 1024px) {
+              .post-title { font-size: 48px; }
+              }
+
+              .post-meta {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 18px;
+              align-items: center;
+              color: #e5e7eb;
+              font-size: 14px;
+              margin-bottom: 12px;
+              }
+
+              .post-meta svg {
+              width: 16px;
+              height: 16px;
+              margin-right: 6px;
+              vertical-align: text-bottom;
+              }
+
+              .post-excerpt {
+              margin-top: 6px;
+              color: #f3f4f6; /* gray-100 */
+              font-size: 18px;
+              line-height: 1.6;
+              display: -webkit-box;
+              -webkit-line-clamp: 3;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              }
+            `}</style>
       </>
     )
   } catch (error) {
     console.error('Error loading blog post:', error)
     notFound()
-  }
+  } 
 }

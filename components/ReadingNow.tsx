@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
+import RoadmapForm from './RoadmapForm'
 
 interface Post {
   id: number
@@ -262,32 +263,10 @@ export default function ReadingNow({ initialPosts }: { initialPosts?: any }) {
           </div>
 
           <aside className="space-y-6">
-            <div className="bg-white rounded-lg shadow-lg p-5">
-              <div className="flex items-center gap-3 mb-3">
-          <svg className="w-5 h-5 text-[#EF623C]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M12 2l7 7-7 7-7-7 7-7z" />
-          </svg>
-          <h4 className="text-lg font-semibold text-gray-900">Get Your University Roadmap</h4>
-              </div>
-              <p className="text-sm text-gray-600 mb-3">3-minute quiz — Personalized application plan</p>
-              <div className="space-y-2 mb-3">
-          <select aria-label="Target degree" className="w-full px-3 py-2 border rounded-md bg-white text-sm">
-            <option>What's your target degree?</option>
-          </select>
-          <select aria-label="Academic level" className="w-full px-3 py-2 border rounded-md bg-white text-sm">
-            <option>Your academic level</option>
-          </select>
-          <select aria-label="Field of study" className="w-full px-3 py-2 border rounded-md bg-white text-sm">
-            <option>Target field of study</option>
-          </select>
-              </div>
-              <button className="w-full px-4 py-2 rounded-md bg-[#EF623C] text-white font-semibold">Get My Custom Plan</button>
+            {/* Roadmap student form */}
+            <RoadmapForm />
+            {/* Roadmap student form end */}
 
-              <div className="mt-4 text-sm text-gray-700">
-          <div>✓ Personalized timeline ✓ Required tests</div>
-          <div>✓ Application deadlines</div>
-              </div>
-            </div>
 
             <div className="bg-white rounded-lg shadow p-5">
               <div className="flex items-center gap-3 mb-2">
