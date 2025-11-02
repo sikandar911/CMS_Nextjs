@@ -38,6 +38,9 @@ export const metadata: Metadata = {
   }
 }
 
+// Force dynamic rendering (no static generation at build time)
+export const dynamic = 'force-dynamic'
+
 export default async function BlogPage() {
   // Get all published posts
   const allPosts = await postsApi.getAll()

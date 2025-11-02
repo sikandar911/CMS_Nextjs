@@ -5,6 +5,9 @@ import FollowJourney from '@/components/FollowJourney'
 import { postsApi } from '@/lib/api'
 import BlogSlider from '@/components/BlogSlider'
 
+// Force dynamic rendering (no static generation at build time)
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   // Server-side fetch of posts to pass into the client component
   const allPosts = await postsApi.getPublished()

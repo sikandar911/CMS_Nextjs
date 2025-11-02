@@ -76,19 +76,14 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   }
 }
 
+// Force dynamic rendering (no static generation at build time)
+export const dynamic = 'force-dynamic'
+
 // Generate static paths for published posts (optional, for better performance)
 export async function generateStaticParams() {
-  try {
-    const posts = await postsApi.getAll()
-    const publishedPosts = posts.filter(post => post.status === 'published')
-    
-    return publishedPosts.map((post) => ({
-      slug: post.slug,
-    }))
-  } catch (error) {
-    console.error('Error generating static params:', error)
-    return []
-  }
+  // Return empty array so build doesn't try to query DB
+  // Pages will be generated on-demand at runtime
+  return []
 }
 
 export default async function BlogPostPage({ params, searchParams }: PageProps) {
