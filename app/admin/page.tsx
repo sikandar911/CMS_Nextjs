@@ -1,8 +1,10 @@
-'use client'
+ 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { clientApi, ClientApiError } from '@/lib/client-api'
 import { useRouter } from 'next/navigation'
+import { useConfirm } from '@/components/WarningModal'
 
 interface Post {
   id: number
@@ -13,6 +15,7 @@ interface Post {
   created_at: string
   updated_at: string
   published_at?: string
+  category?: string
 }
 
 // Helper function to format dates
@@ -32,11 +35,16 @@ export default function AdminDashboard() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
   const [notification, setNotification] = useState<{
     message: string
     type: 'success' | 'error' | 'info'
   } | null>(null)
   const router = useRouter()
+  const confirm = useConfirm()
 
   const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     setNotification({ message, type })
@@ -167,12 +175,63 @@ export default function AdminDashboard() {
     setPosts([])
   }
 
-  const handleDeletePost = async (postId: number) => {
-    if (!confirm('Are you sure you want to delete this post?')) {
-      return
+  // Helper: Filter and search posts with best matches at top
+  const getFilteredAndSortedPosts = () => {
+    let filtered = [...posts]
+
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter(p => p.category === selectedCategory)
     }
 
+    // Filter by search term - sort by relevance (best matches first)
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase()
+      filtered = filtered.map(post => {
+        const titleMatch = post.title.toLowerCase().includes(term)
+        const excerptMatch = post.excerpt.toLowerCase().includes(term)
+        const categoryMatch = post.category?.toLowerCase().includes(term)
+
+        // Scoring: title match is highest priority
+        let score = 0
+        if (titleMatch) score += 3
+        if (excerptMatch) score += 1
+        if (categoryMatch) score += 2
+
+        return { ...post, _searchScore: score }
+      })
+      .filter(p => p._searchScore > 0)
+      .sort((a, b) => (b._searchScore || 0) - (a._searchScore || 0))
+      .map(({ _searchScore, ...p }) => p)
+    }
+
+    return filtered
+  }
+
+  // Extract unique categories
+  const categories = Array.from(
+    new Set(posts.map(p => p.category).filter(Boolean))
+  ).sort()
+
+  const filteredPosts = getFilteredAndSortedPosts()
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredPosts.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedPosts = filteredPosts.slice(startIndex, endIndex)
+
+  // Reset to page 1 when search/filter changes
+  const handleFilterChange = (callback: () => void) => {
+    setCurrentPage(1)
+    callback()
+  }
+
+  const handleDeletePost = async (postId: number) => {
     try {
+      const ok = await confirm('Are you sure you want to delete this post?')
+      if (!ok) return
+
       await clientApi.posts.delete(postId)
       setPosts(posts.filter(post => post.id !== postId))
       showNotification('Post deleted successfully!', 'success')
@@ -315,24 +374,27 @@ export default function AdminDashboard() {
       )}
 
       {/* Header */}
-      <header className={`bg-white shadow-sm border-b border-gray-200 ${notification ? 'mt-12' : ''}`}>
+      <header className={`bg-primary shadow-sm border-b border-gray-200 ${notification ? 'mt-12' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Blog Admin</h1>
-              <p className="text-sm text-gray-600">Manage your blog posts</p>
-            </div>
+            <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+              <img src="/uapp-logo.svg" alt="UAPP Logo" className="h-8 w-auto" />
+              <div>
+                <h1 className="text-2xl font-bold text-white">Blog Admin</h1>
+                <p className="text-sm text-gray-100">Manage your blog posts</p>
+              </div>
+            </Link>
             
             <div className="flex items-center space-x-4">
               <a
                 href="/admin/posts/new"
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className="bg-white text-primary px-4 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium"
               >
                 New Post
               </a>
               <button
                 onClick={handleLogout}
-                className="text-gray-600 hover:text-gray-900 px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
+                className="text-white hover:text-gray-200 px-4 py-2 rounded-md border border-white hover:bg-opacity-20 transition-colors"
               >
                 Logout
               </button>
@@ -341,105 +403,240 @@ export default function AdminDashboard() {
         </div>
       </header>
 
+      {/* Search & Filter Bar */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Search Input */}
+            <div className="md:col-span-2">
+              <input
+                type="text"
+                placeholder="Search posts by title, excerpt, or category..."
+                value={searchTerm}
+                onChange={(e) => handleFilterChange(() => setSearchTerm(e.target.value))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
+              />
+              {searchTerm && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {filteredPosts.length} result{filteredPosts.length !== 1 ? 's' : ''} found
+                </p>
+              )}
+            </div>
+
+            {/* Category Filter */}
+            <div>
+              <label htmlFor="category-select" className="sr-only">Filter by category</label>
+              <select
+                id="category-select"
+                value={selectedCategory}
+                onChange={(e) => handleFilterChange(() => setSelectedCategory(e.target.value))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
+              >
+                <option value="">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-medium text-gray-900">All Posts ({posts.length})</h2>
+            <h2 className="text-lg font-medium text-gray-900">
+              Posts ({filteredPosts.length}{filteredPosts.length !== posts.length ? ` of ${posts.length}` : ''})
+            </h2>
           </div>
 
-          {posts.length === 0 ? (
+          {filteredPosts.length === 0 ? (
             <div className="text-center py-12">
-              <svg className="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No posts yet</h3>
-              <p className="text-gray-600 mb-4">Get started by creating your first blog post</p>
-              <a
-                href="/admin/posts/new"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Create your first post
-              </a>
+              {posts.length === 0 ? (
+                <>
+                  <svg className="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No posts yet</h3>
+                  <p className="text-gray-600 mb-4">Get started by creating your first blog post</p>
+                  <a
+                    href="/admin/posts/new"
+                    className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-800 transition-colors"
+                  >
+                    Create your first post
+                  </a>
+                </>
+              ) : (
+                <>
+                  <svg className="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No results found</h3>
+                  <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+                </>
+              )}
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
-              {posts.map((post) => (
-                <div key={post.id} className="p-6 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          <a
-                            href={`/admin/posts/${post.id}/edit`}
-                            className="hover:text-blue-600 transition-colors"
+            <>
+              <div className="divide-y divide-gray-200">
+                {paginatedPosts.map((post) => (
+                  <div key={post.id} className="p-6 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <h3 className="text-lg font-medium text-gray-900">
+                            <a
+                              href={`/admin/posts/${post.id}/edit`}
+                              className="hover:text-primary transition-colors"
+                            >
+                              {post.title}
+                            </a>
+                          </h3>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              post.status === 'published'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}
                           >
-                            {post.title}
-                          </a>
-                        </h3>
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            {post.status}
+                          </span>
+                          {post.category && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              {post.category}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                          {post.excerpt}
+                        </p>
+                        
+                        <div className="flex items-center text-xs text-gray-500 space-x-4">
+                          <span>Created: {formatDate(post.created_at)}</span>
+                          <span>Updated: {formatDate(post.updated_at)}</span>
+                          {post.published_at && (
+                            <span>Published: {formatDate(post.published_at)}</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-3 ml-6">
+                        <a
+                          href={`/blog/${post.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:text-primary-800 text-sm font-medium"
+                        >
+                          View
+                        </a>
+                        
+                        <a
+                          href={`/admin/posts/${post.id}/edit`}
+                          className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+                        >
+                          Edit
+                        </a>
+
+                        <button
+                          onClick={() => handlePublishToggle(post)}
+                          className={`text-sm font-medium ${
                             post.status === 'published'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-yellow-100 text-yellow-800'
+                              ? 'text-yellow-600 hover:text-yellow-700'
+                              : 'text-green-600 hover:text-green-700'
                           }`}
                         >
-                          {post.status}
-                        </span>
+                          {post.status === 'published' ? 'Unpublish' : 'Publish'}
+                        </button>
+
+                        <button
+                          onClick={() => handleDeletePost(post.id)}
+                          className="text-red-600 hover:text-red-700 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
                       </div>
-                      
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                        {post.excerpt}
-                      </p>
-                      
-                      <div className="flex items-center text-xs text-gray-500 space-x-4">
-                        <span>Created: {formatDate(post.created_at)}</span>
-                        <span>Updated: {formatDate(post.updated_at)}</span>
-                        {post.published_at && (
-                          <span>Published: {formatDate(post.published_at)}</span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-3 ml-6">
-                      <a
-                        href={`/blog/${post.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                      >
-                        View
-                      </a>
-                      
-                      <a
-                        href={`/admin/posts/${post.id}/edit`}
-                        className="text-gray-600 hover:text-gray-900 text-sm font-medium"
-                      >
-                        Edit
-                      </a>
-
-                      <button
-                        onClick={() => handlePublishToggle(post)}
-                        className={`text-sm font-medium ${
-                          post.status === 'published'
-                            ? 'text-yellow-600 hover:text-yellow-700'
-                            : 'text-green-600 hover:text-green-700'
-                        }`}
-                      >
-                        {post.status === 'published' ? 'Unpublish' : 'Publish'}
-                      </button>
-
-                      <button
-                        onClick={() => handleDeletePost(post.id)}
-                        className="text-red-600 hover:text-red-700 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <label htmlFor="items-per-page" className="text-sm text-gray-700">Show per page:</label>
+                  <select
+                    id="items-per-page"
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(Number(e.target.value))
+                      setCurrentPage(1)
+                    }}
+                    className="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm bg-white text-gray-900"
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                  </select>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-600">
+                    Page {currentPage} of {totalPages || 1} ({filteredPosts.length} total)
+                  </span>
+
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Previous
+                    </button>
+
+                    {/* Page number indicators */}
+                    <div className="flex items-center space-x-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum = i + 1
+                        if (totalPages > 5) {
+                          if (currentPage > 3) {
+                            pageNum = currentPage - 2 + i
+                          }
+                          if (pageNum > totalPages) {
+                            pageNum = totalPages - (4 - i)
+                          }
+                        }
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setCurrentPage(pageNum)}
+                            className={`px-2 py-1 rounded-md text-sm font-medium transition-colors ${
+                              currentPage === pageNum
+                                ? 'bg-primary text-white'
+                                : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </main>

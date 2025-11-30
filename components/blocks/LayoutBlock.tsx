@@ -63,6 +63,8 @@ export default function LayoutBlock({
   // Local debounced content state to avoid re-render on every keystroke in nested inputs
   const [localContent, setLocalContent] = useState(content)
   const debounceRef = useRef<NodeJS.Timeout | null>(null)
+  // Track viewport for responsive inline styles where needed
+  const [isMobile, setIsMobile] = useState<boolean>(typeof window !== 'undefined' ? window.innerWidth < 768 : false)
   
   // Store onUpdate and settings in refs to avoid recreating callbacks
   const onUpdateRef = useRef(onUpdate)
@@ -78,6 +80,16 @@ export default function LayoutBlock({
   useEffect(() => {
     setLocalContent(content)
   }, [content])
+
+  // Listen for viewport changes to toggle mobile/desktop behavior
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    // Initial sync in case of hydration mismatch
+    onResize()
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   const scheduleParentUpdate = useCallback((nextContent: any, immediate = false) => {
     setLocalContent(nextContent)
@@ -593,21 +605,23 @@ export default function LayoutBlock({
           </div>
         )}
 
-        {/* Layout Preview */}
-        <div 
-          className="flex border-2 border-dashed border-gray-300 rounded-lg"
+        {/* Layout Preview (editor) - stack columns on small screens for mobile */}
+        <div
+          className="flex flex-col md:flex-row border-2 border-dashed border-gray-300 rounded-lg"
           style={{
             ...containerStyle,
             display: 'flex',
-            gap: `${gap}px`
+            gap: isMobile ? '0px' : `${gap}px`
           }}
         >
           {columnWidths.map((width, index) => (
             <div
               key={index}
-              className={`bg-gray-50 border border-gray-200 rounded transition-all`}
-              style={{ 
-                width: `${width}%`,
+              className={`bg-gray-50 border border-gray-200 rounded transition-all w-full md:w-auto`}
+              style={{
+                width: '100%',
+                maxWidth: isMobile ? '100%' : `${width}%`,
+                flexBasis: isMobile ? '100%' : `${width}%`,
                 minHeight: '150px'
               }}
               onClick={() => {
@@ -631,7 +645,7 @@ export default function LayoutBlock({
                     >
                       + Add Block
                     </button>
-                    
+
                     {showBlockPicker === index && (
                       <div className="absolute top-8 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-20 min-w-48">
                         <div className="text-xs font-medium text-gray-700 mb-2">Add Block to Column {index + 1}</div>
@@ -659,7 +673,7 @@ export default function LayoutBlock({
                     )}
                   </div>
                 </div>
-                
+
                 {/* Render blocks in this column */}
                 <div className="space-y-2">
                   <DndContext
@@ -680,7 +694,7 @@ export default function LayoutBlock({
                       ))}
                     </SortableContext>
                   </DndContext>
-                  
+
                   {columnBlocks[index].length === 0 && (
                     <div className="text-center py-4 text-xs text-gray-400 border-dashed border border-gray-300 rounded">
                       Click "Add Block" to add content
@@ -695,28 +709,29 @@ export default function LayoutBlock({
     )
   }
 
-  // Render mode (non-editor)
+  // Render mode (non-editor) - mobile: stack full-width columns
   return (
-    <div 
-      className="flex"
+    <div
+      className="flex flex-col md:flex-row w-full"
       style={{
         ...containerStyle,
-        display: 'flex',
-        gap: `${gap}px`
+        gap: isMobile ? '0px' : `${gap}px`
       }}
     >
       {columnWidths.map((width, index) => (
         <div
           key={index}
-          style={{ width: `${width}%` }}
-          className="layout-column"
+          style={{ 
+            width: '100%',
+            maxWidth: isMobile ? '100%' : `${width}%`,
+            flexBasis: isMobile ? '100%' : `${width}%`
+          }}
+          className="layout-column w-full md:w-auto"
         >
-          <div className="h-full">
-            <BlockRenderer
-              blocks={columnBlocks[index] || []}
-              isEditor={false}
-            />
-          </div>
+          <BlockRenderer
+            blocks={columnBlocks[index] || []}
+            isEditor={false}
+          />
         </div>
       ))}
     </div>

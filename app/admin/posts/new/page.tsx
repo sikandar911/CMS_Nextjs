@@ -6,6 +6,7 @@ import { clientApi, ClientApiError } from '@/lib/client-api'
 import { generateSlug, generateExcerpt } from '@/lib/seo'
 import BlockEditor from '@/components/BlockEditor'
 import BlockRenderer from '@/components/BlockRenderer'
+import { useConfirm } from '@/components/WarningModal'
 import { getCategories } from '@/lib/categories'
 
 interface Post {
@@ -31,6 +32,7 @@ interface BlockData {
 
 export default function NewPost() {
   const router = useRouter()
+  const confirm = useConfirm()
   
   const [post, setPost] = useState<Post>({
     title: '',
@@ -246,11 +248,10 @@ export default function NewPost() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (hasUnsavedChanges) {
-                    if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                      router.push('/admin')
-                    }
+                    const ok = await confirm('You have unsaved changes. Are you sure you want to leave?')
+                    if (ok) router.push('/admin')
                   } else {
                     router.push('/admin')
                   }

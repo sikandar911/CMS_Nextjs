@@ -4,7 +4,6 @@ import { AuthService } from '@/lib/auth'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import BlockRenderer from '@/components/BlockRenderer'
-import Navigation from '@/components/Navigation'
 import FeaturedCourses from '@/components/FeaturedCourses'
 import { cookies, headers } from 'next/headers'
 import { getCategories } from '@/lib/categories'
@@ -162,7 +161,6 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
         />
 
         <div className="min-h-screen bg-white">
-          <Navigation />
           <article className="relative">
             {/* Preview Banner */}
             {isPreview && (
@@ -182,7 +180,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
 
           {/* Hero Section with Featured Image Background */}
             <header
-            className="blog-header"
+            className="blog-header -mt-20"
             style={{
               backgroundImage: `url(${post.featured_image || 'https://res.cloudinary.com/drgot7znf/image/upload/v1759752597/blog_image_a2jalg.jpg'})`
             }}
@@ -395,16 +393,21 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
               background-size: cover;
               background-position: center;
               background-repeat: no-repeat;
-              height: 60vh;
-              min-height: 320px;
+              min-height: 400px;
+              height: auto;
               padding-bottom: 2rem;
+              display: flex;
+              align-items: flex-end;
               }
 
               @media (min-width: 640px) {
-              .blog-header { height: 80vh; min-height: 420px; }
+              .blog-header { min-height: 450px; }
               }
               @media (min-width: 768px) {
-              .blog-header { height: 400px; }
+              .blog-header { min-height: 500px; }
+              }
+              @media (min-width: 1024px) {
+              .blog-header { min-height: 550px; }
               }
 
               .blog-header__overlay {
@@ -417,18 +420,22 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
               position: relative;
               z-index: 10;
               padding: 24px;
+              width: 100%;
+              padding-top: 80px;
+              padding-bottom: 40px;
               }
 
               @media (min-width: 768px) {
               .blog-header__content {
-                padding: 32px 48px;
+                padding: 32px 48px 48px;
+                padding-top: 100px;
               }
               }
 
               .blog-header__container {
               max-width: 1120px;
               margin: 0 auto;
-              padding-top: 32px;
+              width: 100%;
               }
 
               .blog-header__inner {
@@ -438,7 +445,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
 
               .breadcrumb {
               margin-bottom: 1rem;
-              padding-top: 2rem; /* mobile spacing to separate from navbar */
+              padding-top: 3rem; 
               @media (min-width: 640px) { padding-top: 0; }
               }
 
@@ -475,15 +482,20 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
               .post-title {
               margin: 0 0 12px 0;
               font-weight: 700;
-              line-height: 1.05;
-              font-size: 32px;
+              line-height: 1.15;
+              font-size: 28px;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
               }
 
+              @media (min-width: 640px) {
+              .post-title { font-size: 32px; }
+              }
               @media (min-width: 768px) {
-              .post-title { font-size: 40px; }
+              .post-title { font-size: 36px; line-height: 1.1; }
               }
               @media (min-width: 1024px) {
-              .post-title { font-size: 48px; }
+              .post-title { font-size: 42px; }
               }
 
               .post-meta {
@@ -506,12 +518,14 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
               .post-excerpt {
               margin-top: 6px;
               color: #f3f4f6; /* gray-100 */
-              font-size: 18px;
+              font-size: 16px;
               line-height: 1.6;
-              display: -webkit-box;
-              -webkit-line-clamp: 3;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              }
+              
+              @media (min-width: 768px) {
+              .post-excerpt { font-size: 18px; }
               }
             `}</style>
       </>

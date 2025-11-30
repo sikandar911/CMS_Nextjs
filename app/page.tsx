@@ -1,12 +1,8 @@
-import Navigation from '@/components/Navigation'
 import Link from 'next/link'
 import ReadingNow from '@/components/ReadingNow'
 import FollowJourney from '@/components/FollowJourney'
 import { postsApi } from '@/lib/api'
 import BlogSlider from '@/components/BlogSlider'
-
-// Force dynamic rendering (no static generation at build time)
-export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   // Server-side fetch of posts to pass into the client component
@@ -14,10 +10,10 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navigation />
 
       {/* Full-screen Hero */}
-      <section className="relative h-screen w-full bg-gray-800 overflow-hidden">
+      {/* move the hero up so its background sits under the fixed transparent header */}
+      <section className="relative h-[70vh] md:h-[75vh] lg:h-screen w-full bg-gray-800 overflow-hidden -mt-20">
   {/* Background image (blurred) */}
   <div className="absolute inset-0 z-0">
           <img
@@ -28,43 +24,31 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-black/40" />
         </div>
 
-  <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center relative z-10">
-          <div className="w-full grid grid-cols-12 gap-6 items-center">
+  <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-end lg:items-center relative z-10">
+          <div className="w-full grid grid-cols-12 gap-6 items-end lg:items-center pb-4 lg:pb-0">
             {/* Left Hero (Main content) */}
-            <div className="col-span-12 block lg:hidden pt-10 mt-10" />
-            <div className="col-span-12 lg:col-span-7 xl:col-span-7 pb-8 lg:pb-0">
+            <div className="col-span-12 block lg:hidden pt-4 mt-4" />
+            <div className="col-span-12 lg:col-span-7 xl:col-span-7 pb-0 lg:pb-0 pt-6 sm:pt-20">
               <div className="max-w-2xl text-white ">
-                <div className="inline-block mb-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#EF623C] text-white text-sm font-medium">
-                    Featured Article
-                  </span>
-                </div>
-            
+                
                 {/* blog slider  */}
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">
                   Blogs, Updates and News
                 </h1>
 
-                <p className="text-lg md:text-xl text-white/90 mb-6">
+                <p className="text-lg md:text-xl text-white/90 mb-0 lg:mb-6">
                   Keep yourself updated about latest developments in higher education industry through our range of articles and news updates.
                 </p>
+                <div className="inline-block mt-4">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#EF623C] text-white text-sm font-medium">
+                    Featured Articles
+                  </span>
+                </div>
+            
 
                 {/* Blog slider (client component) */}
                 <BlogSlider posts={allPosts} />
               {/* blog slider  end */}
-                
-                {/* Mobile CTA - moved inside left hero so it stacks under content on small screens */}
-                <div className="block lg:hidden mt-5 mr-5 relative z-20">
-                  <div className="w-full bg-[#F8FAFC] rounded-xl shadow p-4">
-                    <h4 className="text-md font-semibold text-gray-900 text-center">Get Your Free University Success Kit</h4>
-                    <p className="text-sm text-gray-600 text-center">Download our complete application guide + scholarship database</p>
-                    <form className="mt-3 space-y-2">
-                      <input aria-label="First name" type="text" placeholder="Your first name" className="w-full px-3 py-2 rounded-md border border-gray-200 bg-white placeholder-gray-400" />
-                      <input aria-label="Email address" type="email" placeholder="Your email address" className="w-full px-3 py-2 rounded-md border border-gray-200 bg-white placeholder-gray-400" />
-                      <button type="button" className="w-full mt-1 px-4 py-2 rounded-md bg-[#EF623C] text-white font-semibold">Send Me The Success Kit</button>
-                    </form>
-                  </div>
-                </div>
               </div>
             </div>
            
@@ -134,8 +118,20 @@ export default async function HomePage() {
         </div>
       </section>
 
-  {/* Spacer to ensure ReadingNow doesn't overlap the mobile CTA on very small screens */}
-  <div className="block lg:hidden h-6" />
+      {/* Mobile CTA Section - Only visible on mobile/small screens */}
+      <section className="lg:hidden bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="w-full bg-[#F8FAFC] rounded-xl shadow p-4">
+            <h4 className="text-md font-semibold text-gray-900 text-center">Get Your Free University Success Kit</h4>
+            <p className="text-sm text-gray-600 text-center">Download our complete application guide + scholarship database</p>
+            <form className="mt-3 space-y-2">
+              <input aria-label="First name" type="text" placeholder="Your first name" className="w-full px-3 py-2 rounded-md border border-gray-200 bg-white placeholder-gray-400" />
+              <input aria-label="Email address" type="email" placeholder="Your email address" className="w-full px-3 py-2 rounded-md border border-gray-200 bg-white placeholder-gray-400" />
+              <button type="button" className="w-full mt-1 px-4 py-2 rounded-md bg-[#EF623C] text-white font-semibold">Send Me The Success Kit</button>
+            </form>
+          </div>
+        </div>
+      </section>
   <ReadingNow initialPosts={allPosts} />
 
   <FollowJourney />

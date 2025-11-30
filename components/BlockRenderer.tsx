@@ -153,10 +153,12 @@ export default function BlockRenderer({
       )
     }
 
-    // For display mode, wrap with mobile-only spacing and typography
+    // For display mode, check if it's a layout block to remove extra padding
+    const isLayoutBlock = block.type.startsWith('layout')
+    
     return (
-      <div key={block.id} className="my-4 sm:my-0 px-4 sm:px-0">
-        <div className="prose max-w-none">{blockElement}</div>
+      <div key={block.id} className={isLayoutBlock ? "" : "my-4 sm:my-0 px-4 sm:px-0"}>
+        <div className={isLayoutBlock ? "" : "prose max-w-none"}>{blockElement}</div>
       </div>
     )
   }
