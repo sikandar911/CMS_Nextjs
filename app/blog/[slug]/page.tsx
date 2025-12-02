@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 import BlockRenderer from '@/components/BlockRenderer'
 import FeaturedCourses from '@/components/FeaturedCourses'
 import { cookies, headers } from 'next/headers'
-import { getCategories } from '@/lib/categories'
+import { getCategoriesWithCounts } from '@/lib/categories'
 
 interface PageProps {
   params: {
@@ -114,7 +114,20 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
     const blocks = await blocksApi.getByPostId(post.id)
     
     // Get author information - post already contains author details
-  const author = post.author ? { name: (post.author as any).display_name || (post.author as any).name } : null
+    const author = post.author ? { name: (post.author as any).display_name || (post.author as any).name } : null
+
+    // Get all published posts for suggested blogs (excluding current post)
+    const allPosts = await postsApi.getAll()
+    const publishedPosts = allPosts
+      .filter(p => p.status === 'published' && p.id !== post.id)
+      .sort((a, b) => {
+        const dateA = new Date(a.published_at || a.created_at)
+        const dateB = new Date(b.published_at || b.created_at)
+        return dateB.getTime() - dateA.getTime()
+      })
+
+    // Get categories with counts
+    const categories = await getCategoriesWithCounts()
 
     // Calculate content for reading time
     const contentText = blocks.map(block => {
@@ -221,11 +234,13 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
                 </nav>
 
                 {/* Category Tag */}
+                {post.category && (
                 <div style={{ marginBottom: 12, marginTop: 8 }}>
                 <span className="category-tag">
-                  {post.category}
+                  {post.category.name}
                 </span>
                 </div>
+                )}
 
                 {/* Post Title */}
                 <h1 className="post-title">
@@ -261,7 +276,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
                 {/* Post Excerpt */}
                 {post.excerpt && (
                 <p className="post-excerpt">
-                  {post.excerpt}
+                  {post.excerpt.length > 280 ? `${post.excerpt.substring(0, 280)}...` : post.excerpt}
                 </p>
                 )}
               </div>
@@ -299,11 +314,10 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
                         Blog Categories
                       </h3>
                       <div className="space-y-2">
-                        {/* Use canonical categories - counts are placeholders (0) until we implement counts */}
-                        {getCategories().map((c) => (
-                          <a key={c} href={`/blog?category=${encodeURIComponent(c)}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
-                            <span className="text-gray-700 group-hover:text-blue-600">{c}</span>
-                            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">0</span>
+                        {categories.map((category) => (
+                          <a key={category.id} href={`/blog?category=${category.slug}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+                            <span className="text-gray-700 group-hover:text-blue-600">{category.name}</span>
+                            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{category._count?.posts || 0}</span>
                           </a>
                         ))}
                       </div>
@@ -329,7 +343,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
                             placeholder="Enter your email"
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                           />
-                          <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                          <button className="w-full bg-[#045D5E] text-white px-4 py-2 rounded-lg hover:bg-[#034B4C] transition-colors text-sm font-medium">
                             Subscribe Now
                           </button>
                         </div>
@@ -341,43 +355,92 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
             </div>
           </div>
 
-          {/* Article Footer */}
+          {/* Article Footer - Suggested Posts */}
           <footer className="bg-gray-50 py-12">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-              {/* Author Bio */}
-              {author && (
-                <div className="bg-white rounded-lg p-6 shadow-sm">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-blue-600 font-semibold text-xl">
-                          {author.name.charAt(0).toUpperCase()}
-                        </span>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Suggested Posts Section */}
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
+                  Suggested Blogs
+                </h2>
+                
+                {/* Horizontal Scroll Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  {publishedPosts && publishedPosts.slice(0, 4).map((suggestedPost) => (
+                    <article 
+                      key={suggestedPost.id}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                    >
+                      {/* Featured Image */}
+                      <div className="h-40 bg-gray-200 overflow-hidden">
+                        <img
+                          src={suggestedPost.featured_image || 'https://res.cloudinary.com/drgot7znf/image/upload/v1759752597/blog_image_a2jalg.jpg'}
+                          alt={suggestedPost.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {author.name}
-                      </h3>
-                      <p className="text-gray-600">
-                        Author
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
 
-              {/* Navigation to other posts */}
-              <div className="mt-12 pt-12 border-t border-gray-200">
-                <div className="flex justify-center">
+                      <div className="p-5">
+                        {/* Category (left-aligned row) */}
+                        {suggestedPost.category && (
+                          <div className="mb-2 text-left">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#FC7300] text-white">
+                              {suggestedPost.category.name}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Post Title */}
+                        <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2">
+                          <a 
+                            href={`/blog/${suggestedPost.slug}`}
+                            className="hover:text-[#045D5E] transition-colors"
+                          >
+                            {suggestedPost.title}
+                          </a>
+                        </h3>
+
+                        {/* Post Excerpt */}
+                        <p className="text-[#000000] text-sm mb-2 line-clamp-2">
+                          {suggestedPost.excerpt && suggestedPost.excerpt.length > 100 
+                            ? `${suggestedPost.excerpt.substring(0, 100)}...` 
+                            : suggestedPost.excerpt}
+                        </p>
+
+                        {/* Post Date (under excerpt, left-aligned) */}
+                        {(suggestedPost.published_at || suggestedPost.created_at) && (
+                          <div className="text-xs text-gray-500 mb-3">
+                            <time dateTime={(suggestedPost.published_at || suggestedPost.created_at) ? (suggestedPost.published_at || suggestedPost.created_at).toString() : undefined}>
+                              {formatDate(suggestedPost.published_at || suggestedPost.created_at)}
+                            </time>
+                          </div>
+                        )}
+
+                        {/* Read More Link */}
+                        <a 
+                          href={`/blog/${suggestedPost.slug}`}
+                          className="inline-flex items-center text-[#045D5E] hover:text-[#034B4C] font-medium text-sm transition-colors"
+                        >
+                          Read more
+                          <svg className="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </a>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                {/* View More Button */}
+                <div className="flex justify-center pt-4">
                   <a
                     href="/blog"
-                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center px-8 py-3 bg-[#045D5E] text-white font-medium rounded-lg hover:bg-[#034B4C] transition-colors"
                   >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    View More Blogs
+                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
-                    Back to Blog
                   </a>
                 </div>
               </div>
@@ -445,7 +508,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
 
               .breadcrumb {
               margin-bottom: 1rem;
-              padding-top: 3rem; 
+              padding-top: 5rem; 
               @media (min-width: 640px) { padding-top: 0; }
               }
 
@@ -525,7 +588,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
               }
               
               @media (min-width: 768px) {
-              .post-excerpt { font-size: 18px; }
+              .post-excerpt { font-size: 16px; }
               }
             `}</style>
       </>

@@ -9,7 +9,7 @@ const JWT_SECRET = new TextEncoder().encode(
 export interface AuthUser {
   id: number
   email: string
-  display_name: string
+  display_name: string | null
   role: 'admin' | 'editor'
 }
 
@@ -43,13 +43,13 @@ export class AuthService {
 
       // For demo purposes, check against default passwords
       let isValid = false
-      if (user.password === '$2a$10$hash_placeholder_here') {
+      if (user.password_hash === '$2a$10$hash_placeholder_here' || !user.password_hash) {
         // Default passwords: admin123 for admin@blog.com, editor123 for editor@blog.com
         const defaultPassword = email === 'admin@blog.com' ? 'admin123' : 'editor123'
         isValid = password === defaultPassword
       } else {
         // Verify hashed password
-        isValid = await this.verifyPassword(password, user.password)
+        isValid = await this.verifyPassword(password, user.password_hash)
       }
       
       if (!isValid) {

@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import RoadmapForm from './RoadmapForm'
 
 interface Post {
@@ -8,7 +9,7 @@ interface Post {
   slug: string
   title: string
   excerpt: string
-  category?: string
+  category?: string | { id: number; name: string; slug: string } | null
   published_at?: string | null
   created_at?: string
   featured_image?: string
@@ -87,7 +88,8 @@ export default function ReadingNow({ initialPosts }: { initialPosts?: any }) {
   const normalizedSearch = searchTerm.trim().toLowerCase()
   const filteredPosts = flattenedPosts.filter((p: Post) => {
     if (!p || typeof p !== 'object') return false
-    const matchesCategory = selectedCategory ? (p.category === selectedCategory) : true
+    const categoryName = typeof p.category === 'string' ? p.category : p.category?.name || ''
+    const matchesCategory = selectedCategory ? (categoryName === selectedCategory) : true
     if (!normalizedSearch) return matchesCategory
     const inTitle = (p.title || '').toLowerCase().includes(normalizedSearch)
     const inExcerpt = (p.excerpt || '').toLowerCase().includes(normalizedSearch)
@@ -99,7 +101,10 @@ export default function ReadingNow({ initialPosts }: { initialPosts?: any }) {
   const pagedPosts = filteredPosts.slice(start, start + POSTS_PER_PAGE)
 
   // derive available categories from posts (unique)
-  const categories = Array.from(new Set(flattenedPosts.map((p: any) => p?.category).filter(Boolean))).sort((a, b) => String(a).localeCompare(String(b)))
+  const categories = Array.from(new Set(flattenedPosts.map((p: any) => {
+    if (typeof p?.category === 'string') return p.category
+    return p?.category?.name
+  }).filter(Boolean))).sort((a, b) => String(a).localeCompare(String(b)))
 
   return (
     
@@ -188,13 +193,15 @@ export default function ReadingNow({ initialPosts }: { initialPosts?: any }) {
                     fontSize: '0.875rem',
                   }}
                 >
-                  {post.category || 'Article'}
+                  {typeof post.category === 'string' ? post.category : post.category?.name || 'Article'}
                 </span>
               </div>
 
               <div className="p-4 flex-1 flex flex-col">
                 <h3 className="text-base font-semibold text-gray-900 mb-2">
-                  {post.title}
+                  <Link href={`/blog/${post.slug}`} className="hover:text-[#045B5C] transition-colors">
+                    {post.title}
+                  </Link>
                 </h3>
 
                 <p
@@ -226,38 +233,64 @@ export default function ReadingNow({ initialPosts }: { initialPosts?: any }) {
               ))}
             </div>
 
-            {totalPages > 1 && (
+            {filteredPosts.length > 0 && (
               <div className="mt-6 flex items-center justify-center gap-3">
-          <button
-            onClick={() => setPage(Math.max(1, page - 1))}
-            className="px-3 py-2 bg-white border rounded-md"
-            disabled={page === 1}
-          >
-            Prev
-          </button>
-
-          <div className="flex items-center gap-2">
-            {Array.from({ length: totalPages }).map((_, idx) => {
-              const p = idx + 1
-              return (
                 <button
-            key={p}
-            onClick={() => setPage(p)}
-            className={`px-3 py-1 rounded-md ${p === page ? 'bg-[#EF623C] text-white' : 'bg-white border text-gray-700'}`}
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  className={`px-3 py-2 rounded-md border transition-colors ${page === 1 ? 'bg-white text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-gray-700 border-gray-300 hover:bg-[#EF623C] hover:text-white'}`}
+                  disabled={page === 1}
+                  aria-label="Previous page"
                 >
-            {p}
+                  Prev
                 </button>
-              )
-            })}
-          </div>
 
-          <button
-            onClick={() => setPage(Math.min(totalPages, page + 1))}
-            className="px-3 py-2 bg-white border rounded-md"
-            disabled={page === totalPages}
-          >
-            Next
-          </button>
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum = i + 1
+                    if (totalPages > 5) {
+                      if (page > 3) {
+                        pageNum = page - 2 + i
+                      }
+                      if (pageNum > totalPages) {
+                        pageNum = totalPages - (4 - i)
+                      }
+                    }
+                    // ensure pageNum bounds
+                    pageNum = Math.max(1, Math.min(totalPages, pageNum))
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setPage(pageNum)}
+                        className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${page === pageNum ? 'bg-[#045B5C] text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                        aria-current={page === pageNum ? 'page' : undefined}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  })}
+
+                  {totalPages > 5 && page <= totalPages - 3 && (
+                    <span className="px-2 text-sm text-gray-500">...</span>
+                  )}
+
+                  {totalPages > 5 && page > 3 && (
+                    <button
+                      onClick={() => setPage(totalPages)}
+                      className="px-3 py-1 rounded-md text-sm font-medium bg-white border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    >
+                      {totalPages}
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => setPage(Math.min(totalPages, page + 1))}
+                  className={`px-3 py-2 rounded-md border transition-colors ${page === totalPages ? 'bg-white text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-gray-700 border-gray-300 hover:bg-[#045B5C] hover:text-white'}`}
+                  disabled={page === totalPages}
+                  aria-label="Next page"
+                >
+                  Next
+                </button>
               </div>
             )}
           </div>

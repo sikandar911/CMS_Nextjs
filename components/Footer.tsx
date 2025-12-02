@@ -14,19 +14,19 @@ const footer = {
   social: [
     {
       name: "facebook",
-      url: "",
+      url: "https://www.facebook.com/Uappglobal",
     },
     {
       name: "twitter",
-      url: "",
+      url: "https://twitter.com/UAPP_Global",
     },
     {
       name: "instagram",
-      url: "",
+      url: "https://www.instagram.com/uapp.uk/",
     },
     {
       name: "linkedin",
-      url: "",
+      url: "https://www.linkedin.com/company/uapp-global",
     },
   ],
   linksLeft: [
@@ -35,19 +35,19 @@ const footer = {
       data: [
         {
           text: "Our Story",
-          url: "",
+          url: "https://uapp.uk/ourStory",
         },
         {
           text: "Our Team",
-          url: "",
+          url: "https://uapp.uk/ourTeam",
         },
         {
           text: "Careers",
-          url: "",
+          url: "https://uapp.uk/careers",
         },
         {
           text: "Blogs",
-          url: "",
+          url: "https://blogs.uapp.uk/",
         },
       ],
     },
@@ -56,15 +56,15 @@ const footer = {
       data: [
         {
           text: "Sign In",
-          url: "",
+          url: "https://portal.uapp.uk/?_gl=1*1us0zo2*_gcl_au*MTM5NTcwOTA4OC4xNzYwNTk5NDAy*_ga*OTA4MjExNTgzLjE3NDQyNjM4MzQ.*_ga_SW29PQQ78V*czE3NjQ2NzI4MTQkbzIwMSRnMSR0MTc2NDY3MzMzMSRqNjAkbDAkaDA.*_ga_E9S0929YRF*czE3NjQ2NzI4MTQkbzIwMSRnMSR0MTc2NDY3MzMzMSRqNjAkbDAkaDA.",
         },
         {
           text: "Join the Team",
-          url: "",
+          url: "https://uapp.uk/joinOurTeam",
         },
         {
           text: "Book Free Consultation",
-          url: "",
+          url: "https://uapp.uk/bookFreeConsultation",
         },
       ],
     },
@@ -75,15 +75,15 @@ const footer = {
       data: [
         {
           text: "Our Partners",
-          url: "",
+          url: "https://uapp.uk/partners",
         },
         {
           text: "Find Courses",
-          url: "",
+          url: "https://uapp.uk/course",
         },
         {
           text: "Contact us",
-          url: "",
+          url: "https://uapp.uk/contact",
         },
       ],
     },
@@ -92,11 +92,11 @@ const footer = {
       data: [
         {
           text: "Cookies Policy",
-          url: "",
+          url: "https://uapp.uk/cookie-policy",
         },
         {
           text: "Privacy Policy",
-          url: "",
+          url: "https://uapp.uk/privacy-policy",
         },
       ],
     },
@@ -175,9 +175,10 @@ export default function Footer() {
   };
 
   return (
-    <div className="bg-primary text-white">
-      <div className="container mx-auto text-lg py-6 md:py-8">
-        <div className="flex flex-col md:flex-row gap-10">
+    <div className="bg-primary text-white w-full">
+      <div className="w-full px-2 sm:px-6 lg:px-8">
+        <div className="max-w-full mx-auto text-lg py-6 md:py-8">
+          <div className="flex flex-col md:flex-row gap-10">
           <div className="flex-1">
             <div className="relative w-[120px] md:w-[200px] h-[36px] md:h-[60px] mb-8">
               <Image
@@ -190,7 +191,7 @@ export default function Footer() {
 
             <div className="flex">
               <div className="min-w-[102px] min-h-[102px] mb-4 mr-2">
-                <Link href="#">
+                <Link href="https://uapp.uk/icef.png">
                   <Image
                     src="/icef.png"
                     alt="icef"
@@ -243,8 +244,9 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="bg-[#FFFFFF1F] h-[1px]"></div>
-      <div className="container mx-auto flex flex-col md:flex-row items-center md:items-end md:justify-between py-4 text-[#9BBEBF]">
+      <div className="bg-[#FFFFFF1F] h-[1px] w-full"></div>
+      <div className="w-full px-2 sm:px-6 lg:px-8">
+        <div className="max-w-full mx-auto flex flex-col md:flex-row items-center md:items-end md:justify-between py-4 text-[#9BBEBF]">
         <div className="text-center md:text-left">
           <div className="text-[12px]">
             GUCAP Ltd. T/A UAPP (Company No: 13664006)
@@ -258,5 +260,7 @@ export default function Footer() {
         </div>
       </div>
     </div>
+    </div>
+     </div>         
   );
 }

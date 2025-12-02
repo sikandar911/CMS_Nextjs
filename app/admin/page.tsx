@@ -1,10 +1,11 @@
- 'use client'
+'use client'
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { clientApi, ClientApiError } from '@/lib/client-api'
 import { useRouter } from 'next/navigation'
 import { useConfirm } from '@/components/WarningModal'
+import { useClickOutside } from '@/hooks/useClickOutside'
 
 interface Post {
   id: number
@@ -15,7 +16,7 @@ interface Post {
   created_at: string
   updated_at: string
   published_at?: string
-  category?: string
+  category?: string | { id: number; name: string; slug: string } | null
 }
 
 // Helper function to format dates
@@ -43,6 +44,8 @@ export default function AdminDashboard() {
     message: string
     type: 'success' | 'error' | 'info'
   } | null>(null)
+  const [leadsDropdownOpen, setLeadsDropdownOpen] = useState(false)
+  const leadsDropdownRef = useClickOutside(() => setLeadsDropdownOpen(false))
   const router = useRouter()
   const confirm = useConfirm()
 
@@ -190,7 +193,8 @@ export default function AdminDashboard() {
       filtered = filtered.map(post => {
         const titleMatch = post.title.toLowerCase().includes(term)
         const excerptMatch = post.excerpt.toLowerCase().includes(term)
-        const categoryMatch = post.category?.toLowerCase().includes(term)
+        const categoryName = typeof post.category === 'string' ? post.category : post.category?.name || ''
+        const categoryMatch = categoryName.toLowerCase().includes(term)
 
         // Scoring: title match is highest priority
         let score = 0
@@ -210,7 +214,10 @@ export default function AdminDashboard() {
 
   // Extract unique categories
   const categories = Array.from(
-    new Set(posts.map(p => p.category).filter(Boolean))
+    new Set(posts.map(p => {
+      if (typeof p.category === 'string') return p.category
+      return p.category?.name
+    }).filter(Boolean))
   ).sort()
 
   const filteredPosts = getFilteredAndSortedPosts()
@@ -386,6 +393,61 @@ export default function AdminDashboard() {
             </Link>
             
             <div className="flex items-center space-x-4">
+              {/* Leads Dropdown */}
+              <div className="relative" ref={leadsDropdownRef}>
+                <button
+                  onClick={() => setLeadsDropdownOpen(!leadsDropdownOpen)}
+                  className="text-white hover:text-gray-200 p-2 rounded-md hover:bg-white/10 transition-colors"
+                  title="View Form Leads"
+                >
+                  <svg 
+                    className="w-6 h-6" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
+                    />
+                  </svg>
+                </button>
+                
+                {leadsDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 border border-gray-200">
+                    <div className="py-1">
+                      <Link
+                        href="/admin/university-kit-leads"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        onClick={() => setLeadsDropdownOpen(false)}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span>Success Kit Form Leads</span>
+                        </div>
+                      </Link>
+                      
+                      <Link
+                        href="/admin/roadmap-leads"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        onClick={() => setLeadsDropdownOpen(false)}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                          </svg>
+                          <span>Roadmap Form Leads</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <a
                 href="/admin/posts/new"
                 className="bg-white text-primary px-4 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium"
@@ -506,7 +568,7 @@ export default function AdminDashboard() {
                           </span>
                           {post.category && (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {post.category}
+                              {typeof post.category === 'string' ? post.category : post.category.name}
                             </span>
                           )}
                         </div>

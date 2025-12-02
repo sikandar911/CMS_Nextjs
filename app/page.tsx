@@ -3,6 +3,7 @@ import ReadingNow from '@/components/ReadingNow'
 import FollowJourney from '@/components/FollowJourney'
 import { postsApi } from '@/lib/api'
 import BlogSlider from '@/components/BlogSlider'
+import UniversityKitForm from '@/components/UniversityKitForm'
 
 export default async function HomePage() {
   // Server-side fetch of posts to pass into the client component
@@ -55,28 +56,7 @@ export default async function HomePage() {
             {/* Right-middle overlay form (will appear over hero) */}
             <div className="col-span-12 lg:col-span-5 xl:col-span-4 relative">
               <div className="hidden lg:block">
-                <div className="absolute right-6 top-1/2 transform -translate-y-1/2 w-[360px] bg-[#F8FAFC] rounded-2xl shadow-lg p-6">
-                  <h3 className="text-lg font-bold text-gray-900 text-center">Get Your Free University Success Kit</h3>
-                  <p className="text-sm text-gray-600 mt-2 text-center">Download our complete application guide + scholarship database</p>
-
-                  <form className="mt-4 space-y-3">
-                    <input type="text" placeholder="Your first name" className="w-full px-4 py-2 rounded-md border border-gray-200 bg-white placeholder-gray-400" />
-                    <input type="email" placeholder="Your email address" className="w-full px-4 py-2 rounded-md border border-gray-200 bg-white placeholder-gray-400" />
-                    <button type="button" className="w-full mt-2 px-4 py-2 rounded-md bg-[#EF623C] text-white font-semibold">Send Me The Success Kit</button>
-                  </form>
-
-                  <div className="mt-4 text-center">
-                    <div className="flex items-center justify-center gap-2 text-[#EF623C]">
-                      {/* stars */}
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <svg key={i} className="w-4 h-4" viewBox="0 0 20 20" fill="#EF623C" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.922-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.175 0l-3.37 2.448c-.784.57-1.838-.196-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z"/>
-                        </svg>
-                      ))}
-                    </div>
-                    <div className="text-sm text-gray-700 mt-2">4.9/5 rating from 2,847 students</div>
-                  </div>
-                </div>
+                <UniversityKitForm variant="desktop" />
               </div>
             </div>
             {/* Sidebar (far right) - visible on large screens */}
@@ -121,28 +101,10 @@ export default async function HomePage() {
       {/* Mobile CTA Section - Only visible on mobile/small screens */}
       <section className="lg:hidden bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="w-full bg-[#F8FAFC] rounded-xl shadow p-4">
-            <h4 className="text-md font-semibold text-gray-900 text-center">Get Your Free University Success Kit</h4>
-            <p className="text-sm text-gray-600 text-center">Download our complete application guide + scholarship database</p>
-            <form className="mt-3 space-y-2">
-              <input aria-label="First name" type="text" placeholder="Your first name" className="w-full px-3 py-2 rounded-md border border-gray-200 bg-white placeholder-gray-400" />
-              <input aria-label="Email address" type="email" placeholder="Your email address" className="w-full px-3 py-2 rounded-md border border-gray-200 bg-white placeholder-gray-400" />
-              <button type="button" className="w-full mt-1 px-4 py-2 rounded-md bg-[#EF623C] text-white font-semibold">Send Me The Success Kit</button>
-            </form>
-          </div>
+          <UniversityKitForm variant="mobile" />
         </div>
       </section>
   <ReadingNow initialPosts={allPosts} />
-
-  <FollowJourney />
-
-      <footer className="bg-white border-t border-gray-200 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-gray-600">
-            <p>&copy; UAPP</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

@@ -1,22 +1,34 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, Suspense } from 'react'
 import Link from 'next/link'
+import { useSearchParams, useRouter } from 'next/navigation'
+
+interface Category {
+  id: number
+  name: string
+  slug: string
+}
 
 interface Post {
-  id: string
+  id: number
   title: string
   slug: string
-  excerpt: string
-  status: 'draft' | 'published'
-  created_at: string
-  updated_at: string
-  published_at?: string
-  category?: string
+  excerpt: string | null
+  status: string
+  created_at: Date
+  updated_at: Date
+  published_at?: Date | null
+  category?: Category | null
+  author?: {
+    id: number
+    display_name: string | null
+  }
 }
 
 interface BlogPageClientProps {
   posts: Post[]
+  categories: Category[]
 }
 
 function formatDate(dateInput?: string | Date): string {
@@ -29,24 +41,30 @@ function formatDate(dateInput?: string | Date): string {
   })
 }
 
-export default function BlogPageClient({ posts }: BlogPageClientProps) {
+function BlogContent({ posts, categories }: BlogPageClientProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  
+  const categoryParam = searchParams.get('category') || ''
+  
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState(categoryParam)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
 
-  // Get unique categories
-  const categories = Array.from(
-    new Set(posts.map(p => p.category).filter(Boolean))
-  ).sort()
+  // Update selected category when URL changes
+  useEffect(() => {
+    setSelectedCategorySlug(categoryParam)
+    setCurrentPage(1)
+  }, [categoryParam])
 
   // Filter and search with best matches at top
   const getFilteredAndSortedPosts = () => {
     let filtered = [...posts]
 
-    // Filter by category
-    if (selectedCategory) {
-      filtered = filtered.filter(p => p.category === selectedCategory)
+    // Filter by category slug
+    if (selectedCategorySlug) {
+      filtered = filtered.filter(p => p.category?.slug === selectedCategorySlug)
     }
 
     // Filter by search term - sort by relevance (best matches first)
@@ -54,8 +72,8 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
       const term = searchTerm.toLowerCase()
       filtered = filtered.map(post => {
         const titleMatch = post.title.toLowerCase().includes(term)
-        const excerptMatch = post.excerpt.toLowerCase().includes(term)
-        const categoryMatch = post.category?.toLowerCase().includes(term)
+        const excerptMatch = post.excerpt?.toLowerCase().includes(term) || false
+        const categoryMatch = post.category?.name.toLowerCase().includes(term)
 
         // Scoring: title match is highest priority
         let score = 0
@@ -71,6 +89,17 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
     }
 
     return filtered
+  }
+  
+  // Handle category change - update URL
+  const handleCategoryChange = (slug: string) => {
+    setCurrentPage(1)
+    setSelectedCategorySlug(slug)
+    if (slug) {
+      router.push(`/blog?category=${slug}`)
+    } else {
+      router.push('/blog')
+    }
   }
 
   const filteredPosts = getFilteredAndSortedPosts()
@@ -114,14 +143,14 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
               <label htmlFor="blog-category-select" className="sr-only">Filter by category</label>
               <select
                 id="blog-category-select"
-                value={selectedCategory}
-                onChange={(e) => handleFilterChange(() => setSelectedCategory(e.target.value))}
+                value={selectedCategorySlug}
+                onChange={(e) => handleCategoryChange(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
               >
                 <option value="">All Categories</option>
                 {categories.map(cat => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                  <option key={cat.id} value={cat.slug}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
@@ -171,7 +200,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                           <>
                             <span className="mx-2">•</span>
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary">
-                              {post.category}
+                              {post.category.name}
                             </span>
                           </>
                         )}
@@ -286,5 +315,13 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
         </div>
       </section>
     </>
+  )
+}
+
+export default function BlogPageClient(props: BlogPageClientProps) {
+  return (
+    <Suspense fallback={<div className="py-8 text-center text-gray-500">Loading...</div>}>
+      <BlogContent {...props} />
+    </Suspense>
   )
 }

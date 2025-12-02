@@ -3,6 +3,7 @@ import { SEOHelper } from '@/lib/seo'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import BlogPageClient from '@/components/BlogPageClient'
+import { getCategories } from '@/lib/categories'
 
 // Helper function to format dates
 function formatDate(dateInput?: string | Date): string {
@@ -13,20 +14,6 @@ function formatDate(dateInput?: string | Date): string {
     month: 'long',
     day: 'numeric'
   })
-}
-
-interface Post {
-  id: string
-  title: string
-  slug: string
-  excerpt: string
-  status: 'draft' | 'published'
-  created_at: string
-  updated_at: string
-  published_at?: string
-  meta_title?: string
-  meta_description?: string
-  category?: string
 }
 
 export const metadata: Metadata = {
@@ -50,6 +37,9 @@ export default async function BlogPage() {
       return dateB.getTime() - dateA.getTime()
     })
 
+  // Get all categories
+  const categories = await getCategories()
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section - Solid Color */}
@@ -68,7 +58,7 @@ export default async function BlogPage() {
       </section>
 
       {/* Blog Posts with Search and Filter */}
-      <BlogPageClient posts={publishedPosts} />
+      <BlogPageClient posts={publishedPosts} categories={categories} />
     </div>
   )
 }

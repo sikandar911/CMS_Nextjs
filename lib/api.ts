@@ -5,8 +5,13 @@ import type { Post, User, PostBlock, PostRevision } from '@prisma/client'
 export interface PostWithAuthor extends Post {
   author: {
     id: number
-    display_name: string
+    display_name: string | null
   }
+  category?: {
+    id: number
+    name: string
+    slug: string
+  } | null
 }
 
 export interface PostWithAuthorAndBlocks extends PostWithAuthor {
@@ -25,6 +30,13 @@ export const postsApi = {
           select: {
             id: true,
             display_name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
           },
         },
       },
@@ -49,6 +61,13 @@ export const postsApi = {
             display_name: true,
           },
         },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
       orderBy: [
         { status: 'desc' }, // Published posts come first (alphabetically 'published' > 'draft')
@@ -69,6 +88,13 @@ export const postsApi = {
             display_name: true,
           },
         },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
     })
     return post
@@ -85,6 +111,13 @@ export const postsApi = {
           select: {
             id: true,
             display_name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
           },
         },
       },
@@ -108,6 +141,13 @@ export const postsApi = {
             display_name: true,
           },
         },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
       orderBy: {
         updated_at: 'desc',
@@ -124,6 +164,13 @@ export const postsApi = {
           select: {
             id: true,
             display_name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
           },
         },
       },
@@ -143,7 +190,8 @@ export const postsApi = {
       const nextRevisionNumber = (latestRevision?.revision_number || 0) + 1
       
       // Update the post and create revision in a transaction
-      const result = await prisma.$transaction(async (tx) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await prisma.$transaction(async (tx: any) => {
         // Update the post
         const updatedPost = await tx.post.update({
           where: { id },
@@ -153,6 +201,13 @@ export const postsApi = {
               select: {
                 id: true,
                 display_name: true,
+              },
+            },
+            category: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
               },
             },
           },
@@ -251,7 +306,8 @@ export const blocksApi = {
 
   reorder: async (postId: number, blockIds: string[]): Promise<void> => {
     // Use transaction to ensure all updates happen atomically
-    await prisma.$transaction(async (tx) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await prisma.$transaction(async (tx: any) => {
       const updates = blockIds.map((id, newIndex) => 
         tx.postBlock.updateMany({
           where: { 
@@ -271,7 +327,8 @@ export const blocksApi = {
   updateMany: async (blocks: Partial<PostBlock>[]): Promise<PostBlock[]> => {
     const updatedBlocks: PostBlock[] = []
     
-    await prisma.$transaction(async (tx) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await prisma.$transaction(async (tx: any) => {
       for (const blockUpdate of blocks) {
         if (blockUpdate.id) {
           // Try to update existing block

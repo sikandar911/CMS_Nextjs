@@ -22,34 +22,34 @@ const headerData = {
     },
     {
       name: "Courses",
-      url: "",
+      url: "https://uapp.uk/course",
     },
     {
       name: "For Institutes",
-      url: "",
+      url: "https://uapp.uk/partners",
     },
   ],
 
   explore: [
     {
       name: "Explore Courses",
-      url: "",
+      url: "https://uapp.uk/course",
     },
     {
       name: "UAPP Platform",
-      url: "",
+      url: "https://uapp.uk/platform",
     },
     {
       name: "Are you a student?",
-      url: "",
+      url: "https://uapp.uk/student",
     },
     {
       name: "Are you an institute?",
-      url: "",
+      url: "https://uapp.uk/partners",
     },
     {
       name: "Are you a consultant?",
-      url: "",
+      url: "https://uapp.uk/educationConsultant",
     },
   ],
 
@@ -60,15 +60,15 @@ const headerData = {
         menuLinks: [
           {
             name: "Explore Courses",
-            url: "",
+            url: "https://uapp.uk/course",
           },
           {
             name: "Explore Accommodation",
-            url: "",
+            url: "https://accommodation.uapp.uk/",
           },
           {
             name: "Explore Study Loans",
-            url: "",
+            url: "https://uapp.uk/loans",
           },
         ],
       },
@@ -85,7 +85,7 @@ const headerData = {
           },
           {
             name: "What to do next?",
-            url: "",
+            url: "https://uapp.uk/bookFreeConsultation",
           },
         ],
       },
@@ -102,7 +102,7 @@ const headerData = {
           },
           {
             name: "Take your next Step",
-            url: "",
+            url: "https://uapp.uk/bookFreeConsultation",
           },
         ],
       },
@@ -111,7 +111,7 @@ const headerData = {
         menuLinks: [
           {
             name: "UK",
-            url: "",
+            url: "https://uapp.uk/why-uk",
           },
         ],
       },
@@ -131,31 +131,31 @@ const headerData = {
   moreOptions: [
     {
       name: "UAPP Platform",
-      url: "",
+      url: "https://uapp.uk/platform",
     },
     {
       name: "Our Story",
-      url: "",
+      url: "https://uapp.uk/ourStory",
     },
     {
       name: "Consultants",
-      url: "",
+      url: "https://uapp.uk/educationConsultant",
     },
     {
       name: "Affiliates",
-      url: "",
+      url: "https://uapp.uk/affiliate",
     },
     {
       name: "Careers",
-      url: "",
+      url: "https://uapp.uk/careers",
     },
     {
       name: "Blogs",
-      url: "",
+      url: "https://blogs.uapp.uk/",
     },
     {
       name: "Events",
-      url: "",
+      url: "https://uapp.uk/events",
     },
   ],
   
@@ -165,52 +165,52 @@ const headerData = {
       subMenu: [
         {
           name: "Explore Courses",
-          url: "",
+          url: "https://uapp.uk/course",
         },
         {
           name: "UAPP Platform",
-          url: "",
+          url: "https://uapp.uk/platform",
         },
         {
           name: "Are you a student?",
-          url: "",
+          url: "https://uapp.uk/student",
         },
         {
           name: "Are you an institute?",
-          url: "",
+          url: "https://uapp.uk/partners",
         },
         {
           name: "Are you a consultant",
-          url: "",
+          url: "https://uapp.uk/educationConsultant",
         },
       ],
     },
     {
       name: "For Student",
-      url: "",
+      url: "https://uapp.uk/student",
     },
     {
       name: "For Institutes",
-      url: "",
+      url: "https://uapp.uk/partners",
     },
     {
       name: "Courses",
-      url: "",
+      url: "https://uapp.uk/course",
     },
     {
       name: "More",
       subMenu: [
         {
           name: "UAPP Platform",
-          url: "",
+          url: "https://uapp.uk/platform",
         },
         {
           name: "Our Story",
-          url: "",
+          url: "https://uapp.uk/ourStory",
         },
         {
           name: "Consultants",
-          url: "",
+          url: "https://uapp.uk/educationConsultant",
         },
         {
           name: "Affiliates",
@@ -218,15 +218,15 @@ const headerData = {
         },
         {
           name: "Careers",
-          url: "",
+          url: "https://uapp.uk/careers",
         },
         {
           name: "Blogs",
-          url: "",
+          url: "https://blogs.uapp.uk/",
         },
         {
           name: "Events",
-          url: "",
+          url: "https://uapp.uk/events",
         },
       ],
     },
@@ -236,7 +236,7 @@ const headerData = {
 const buttonData = {
   signInButton: {
     text: "Sign In",
-    url: "",
+    url: "https://portal.uapp.uk/?_gl=1*1norbey*_gcl_au*MTM5NTcwOTA4OC4xNzYwNTk5NDAy*_ga*OTA4MjExNTgzLjE3NDQyNjM4MzQ.*_ga_SW29PQQ78V*czE3NjQ2NTkyNTUkbzE5OSRnMSR0MTc2NDY2MDI0OCRqNjAkbDAkaDA.*_ga_E9S0929YRF*czE3NjQ2NTkyNTUkbzE5OSRnMSR0MTc2NDY2MDI0OCRqNjAkbDAkaDA.",
     target: "_blank",
     classes:
       "bg-primary border-white text-white gap-2 py-2 pl-2 pr-5 font-semibold leading-5 inline-flex items-center justify-center rounded-full whitespace-nowrap",
@@ -247,7 +247,7 @@ const buttonData = {
   },
   bookFreeConsultationButton: {
     text: "Book Free Consultation",
-    url: "",
+    url: "https://uapp.uk/bookFreeConsultation",
     classes:
       "text-color bg-white text-default border-white gap-2 py-2 pl-2 pr-5 font-semibold leading-5 inline-flex items-center justify-center rounded-full whitespace-nowrap",
     icon: {
@@ -302,8 +302,9 @@ export default function Header() {
   return (
   // fixed transparent header so hero can sit behind it. 'has-scroll' will provide shadow when user scrolls.
   <div className={`fixed top-0 left-0 right-0 z-50 ${scrolling ? "header-scrolled has-scroll" : "bg-transparent"}`}>
-      <div className="container mx-auto py-3">
-        <div className="flex md:flex-row justify-between items-center">
+      <div className="w-full sm:px-3 lg:px-5">
+        <div className="max-w-full mx-auto py-3">
+          <div className="flex md:flex-row justify-between items-center">
           <div>
             <Link href="/">
               <Image
@@ -436,8 +437,9 @@ export default function Header() {
               onClick={() => handleButtonMenu("")}
             ></div>
             <div className="popup-bg relative">
-              <div className="container mx-auto">
-                <div className="flex flex-wrap justify-between g-2 py-5">
+              <div className="w-full px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
+                  <div className="flex flex-wrap justify-between g-2 py-5">
                   {(openMenu === "explore" || openMenu === "moreOptions") && (
                     <ExploreMenu
                       menuData={headerData[openMenu]}
@@ -450,6 +452,7 @@ export default function Header() {
                       onButtonMenu={(item: string) => handleButtonMenu(item)}
                     />
                   )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -460,6 +463,7 @@ export default function Header() {
         openMenu={openMenu}
         setOpenMenu={setOpenMenu}
       />
+    </div>
     </div>
   );
 }

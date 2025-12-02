@@ -140,7 +140,7 @@ export class SEOHelper {
 
     // Add article section (category)
     if (post.category) {
-      ;(schema as any).articleSection = post.category
+      ;(schema as any).articleSection = typeof post.category === 'string' ? post.category : post.category.name
     }
 
     return schema
