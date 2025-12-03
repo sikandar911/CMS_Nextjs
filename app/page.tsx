@@ -104,7 +104,8 @@ export default async function HomePage() {
           <UniversityKitForm variant="mobile" />
         </div>
       </section>
-  <ReadingNow initialPosts={allPosts} />
+      <ReadingNow initialPosts={allPosts} />
+      <FollowJourney /> {/* Follow Journey Section */}
     </div>
   )
 }
